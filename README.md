@@ -73,3 +73,7 @@ RepoForge never deletes or archives repositories automatically.
 ## Optional higher API limits
 
 Paste a fine-grained GitHub token into the session-only field. Grant only read access to repository metadata, pull requests, and Actions. RepoForge does not persist the token; closing or refreshing the window clears it. Never commit tokens to the repository or place them in Vite environment variables.
+
+## Folder organisation and recovery
+
+See the [project and folder guide](docs/PROJECT-GUIDE.md) for preserved material, verified limits and the next milestone.
