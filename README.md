@@ -8,7 +8,7 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 - Search and category filters
 - Health, activity, and CI summaries
 - Safe cleanup recommendations
-- Seeded fallback data based on the current SpidermanTotro repository audit
+- Seeded fallback data based on a historical account audit; sample data is not a current scan
 - Live read-only scan of public GitHub repositories
 - Loading, API failure, and public rate-limit handling
 - Automatic metadata classification and activity signals
