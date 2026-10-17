@@ -30,7 +30,7 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -39,7 +39,7 @@ Open the Vite address shown in the terminal.
 ## Run as a desktop application
 
 ```bash
-npm install
+npm ci
 npm run desktop
 ```
 
@@ -52,7 +52,7 @@ REPOFORGE_DEV_URL=http://localhost:4173 npm run desktop:dev
 ## Build Linux packages
 
 ```bash
-npm install
+npm ci
 npm run package:linux
 ```
 
@@ -77,3 +77,7 @@ Paste a fine-grained GitHub token into the session-only field. Grant only read a
 ## Folder organisation and recovery
 
 See the [project and folder guide](docs/PROJECT-GUIDE.md) for preserved material, verified limits and the next milestone.
+
+## Qualification status
+
+The 18 October documentation-cleanup commit passed [CI](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/39079681607). This verifies the workflow's checks, not installation of AppImage/deb packages. Treat version 0.7 as a development version; RC/RTM readiness has not been established. Use the committed lockfile with npm ci.
