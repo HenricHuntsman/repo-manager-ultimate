@@ -1,0 +1,65 @@
+name: Phone & Cloud Progress
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 8,12,14,19 * * *"
+      timezone: "Australia/Melbourne"
+  push:
+    branches: [feature/mobile-cloud-continuity-20261019]
+    paths:
+      - .github/workflows/cloud-continuity.yml
+      - scripts/cloud-continuity.mjs
+      - scripts/cloud-continuity.test.mjs
+  pull_request:
+    paths:
+      - .github/workflows/cloud-continuity.yml
+      - scripts/cloud-continuity.mjs
+      - scripts/cloud-continuity.test.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloud-continuity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and offline tests
+        run: |
+          node --check scripts/cloud-continuity.mjs
+          node --test scripts/cloud-continuity.test.mjs
+
+  public-status:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Scan public project metadata, PR counts and CI
+        run: node scripts/cloud-continuity.mjs
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          REPORT_DIR: reports
+      - name: Keep downloadable phone-friendly reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-project-status
+          path: |
+            reports/cloud-status.md
+            reports/cloud-status.json
+          if-no-files-found: warn
+          retention-days: 3
