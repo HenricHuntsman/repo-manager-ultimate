@@ -35,17 +35,39 @@
   "build": {
     "appId": "dev.repoforge.dashboard",
     "productName": "RepoForge Dashboard",
-    "directories": { "output": "release" },
-    "files": ["dist/**/*", "electron/**/*", "package.json"],
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
     "artifactName": "${productName}-${version}-${arch}.${ext}",
     "linux": {
       "target": [
-        { "target": "AppImage", "arch": ["x64"] },
-        { "target": "deb", "arch": ["x64"] }
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
       ],
       "category": "Development",
       "synopsis": "Repository health and cleanup dashboard",
-      "description": "Read-only GitHub repository health, CI, comparison, and cleanup planning dashboard."
+      "description": "Read-only GitHub repository health, CI, comparison, and cleanup planning dashboard.",
+      "maintainer": "HenricHuntsman"
     }
+  },
+  "description": "Read-only repository health and cleanup dashboard",
+  "author": {
+    "name": "HenricHuntsman",
+    "url": "https://github.com/HenricHuntsman"
   }
 }
