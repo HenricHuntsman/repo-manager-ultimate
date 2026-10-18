@@ -1,7 +1,7 @@
 name: Linux package qualification
 on:
   push:
-    paths: [.github/workflows/linux-package-qualification.yml]
+    paths: [.github/workflows/linux-package-qualification.yml, package.json, package-lock.json, electron/**]
   workflow_dispatch:
 permissions:
   contents: read
@@ -26,6 +26,7 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run package:linux
       - name: Retain packages
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: linux-packages
