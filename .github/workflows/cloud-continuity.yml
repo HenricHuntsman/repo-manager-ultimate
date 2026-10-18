@@ -10,12 +10,12 @@ on:
     paths:
       - .github/workflows/cloud-continuity.yml
       - scripts/cloud-continuity.mjs
-      - scripts/cloud-continuity.test.mjs
+      - scripts/cloud-continuity.node-check.mjs
   pull_request:
     paths:
       - .github/workflows/cloud-continuity.yml
       - scripts/cloud-continuity.mjs
-      - scripts/cloud-continuity.test.mjs
+      - scripts/cloud-continuity.node-check.mjs
 
 permissions:
   contents: read
@@ -37,7 +37,7 @@ jobs:
       - name: Syntax and offline tests
         run: |
           node --check scripts/cloud-continuity.mjs
-          node --test scripts/cloud-continuity.test.mjs
+          node --test scripts/cloud-continuity.node-check.mjs
 
   public-status:
     if: github.event_name != 'pull_request'
