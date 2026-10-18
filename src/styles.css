@@ -111,3 +111,26 @@ footer { text-align:center;color:#5d728e;padding:30px;font-size:12px; }
 .tokenPanel h2{margin:5px 0 8px}.tokenPanel p{color:#8496ad;line-height:1.5;margin:0}
 .tokenPanel label span,.tokenPanel label small{display:block;color:#8196af;font-size:11px}.tokenPanel input{width:100%;margin:7px 0;padding:11px;color:#e4edf9;background:#081522;border:1px solid #29415e;border-radius:9px}
 @media(max-width:760px){.tokenPanel{grid-template-columns:1fr}}
+
+
+/* Read-only Dragon Project Doctor report import (no upload or network calls). */
+.localDoctor { margin: 26px 0; padding: 24px; border: 1px solid #294462; border-radius: 18px; background: rgba(13,28,46,.8); }
+.localDoctor h2 { margin: 6px 0 10px; font-size: 22px; }
+.localDoctor p { color: #a5b5c9; line-height: 1.55; }
+.localDoctor code { color: #bfdbfe; }
+.doctorHint { color: #879bb4 !important; font-size: 13px; }
+.doctorFile { display: grid; gap: 10px; max-width: 450px; margin-top: 16px; color: #d2e0ef; font-size: 13px; font-weight: 600; }
+.doctorFile input { border: 1px dashed #3e5e82; border-radius: 11px; padding: 12px; background: #071725; color: #d8e6f5; width: 100%; }
+.doctorError { color: #ffb4be !important; font-weight: 700; }
+.doctorResults { padding-top: 16px; }
+.doctorSummary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.doctorSummary > * { padding: 12px; border: 1px solid #2a4564; border-radius: 10px; color: #c9dcf4; font-size: 13px; }
+.doctorList { list-style: none; padding: 0; margin: 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.doctorList li { min-width: 0; padding: 12px; background: #08192b; border: 1px solid #233a55; border-radius: 10px; }
+.doctorList strong, .doctorList span, .doctorList small { display: block; overflow-wrap: anywhere; }
+.doctorList strong { color: #eef5fe; }
+.doctorList span { color: #8fb0d0; margin-top: 6px; font-size: 12px; }
+.doctorList small { color: #8fa1b8; margin-top: 6px; font-size: 11px; }
+.doctorClear { padding: 10px 14px; border-radius: 9px; border: 1px solid #405d7f; background: #162f4d; color: #e9f2ff; }
+@media(max-width:760px) { .doctorSummary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .doctorList { grid-template-columns: 1fr; } }
+@media(max-width:460px) { .doctorSummary { grid-template-columns: 1fr; } .localDoctor { padding: 14px; } }
