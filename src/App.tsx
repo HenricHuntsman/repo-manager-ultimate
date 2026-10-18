@@ -4,7 +4,8 @@ import { CompareAndExport } from "./CompareAndExport";
 import { inspectRepository, scanPublicRepositories } from "./github";
 import type { Health, RepoInspection, RepoKind, Repository } from "./types";
 
-const OWNER = "SpidermanTotro";
+const OWNER = "HenricHuntsman";
+const PUBLIC_HOSTED = import.meta.env.VITE_PUBLIC_HOSTED === "true";
 
 const kindLabels: Record<RepoKind | "all", string> = {
   all: "All repositories",
@@ -25,7 +26,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<RepoKind | "all">("all");
   const [scanning, setScanning] = useState(false);
-  const [scanMessage, setScanMessage] = useState("Showing verified audit snapshot.");
+  const [scanMessage, setScanMessage] = useState("Showing historical sample data. Run a live scan for current public repositories.");
   const [scanError, setScanError] = useState(false);
   const [lastScan, setLastScan] = useState<Date | null>(null);
   const [inspections, setInspections] = useState<Record<string, RepoInspection>>({});
@@ -123,6 +124,7 @@ function App() {
           </div>
         </section>
 
+        {!PUBLIC_HOSTED && (
         <section className="tokenPanel">
           <div>
             <p className="eyebrow">OPTIONAL API ACCESS</p>
@@ -136,9 +138,10 @@ function App() {
             <small>{token ? "Token active for this session only." : "Public unauthenticated mode."}</small>
           </label>
         </section>
+        )}
 
         <section className="stats" aria-label="Repository summary">
-          <article><span>Total tracked</span><strong>{repositories.length}</strong><small>public scan or audit snapshot</small></article>
+          <article><span>Total tracked</span><strong>{repositories.length}</strong><small>public scan or historical sample</small></article>
           <article><span>Healthy</span><strong className="green">{healthy}</strong><small>recent non-cleanup activity</small></article>
           <article><span>Needs attention</span><strong className="amber">{attention}</strong><small>review before action</small></article>
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
