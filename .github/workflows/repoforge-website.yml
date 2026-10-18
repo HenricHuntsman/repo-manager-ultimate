@@ -1,0 +1,78 @@
+name: Free RepoForge website
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/repoforge-website.yml
+      - src/**
+      - index.html
+      - vite.config.ts
+      - package.json
+      - package-lock.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repoforge-website-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install pinned dependencies without desktop download
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run regression tests
+        run: npm test
+      - name: Build public, token-free static web dashboard
+        run: npm run build
+        env:
+          VITE_PUBLIC_HOSTED: 'true'
+      - name: Verify generated entry file
+        run: test -s dist/index.html
+      - name: Retain compiled website for independent hosting
+        uses: actions/upload-artifact@v4
+        with:
+          name: repoforge-static-site
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Retrieve verified static website
+        uses: actions/download-artifact@v4
+        with:
+          name: repoforge-static-site
+          path: dist/
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/
+      - name: Deploy only after Pages is enabled by the repository owner
+        id: deployment
+        uses: actions/deploy-pages@v4
