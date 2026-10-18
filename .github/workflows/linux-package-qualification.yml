@@ -25,6 +25,10 @@ jobs:
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run package:linux
+      - name: Configure Electron sandbox helper on disposable runner
+        run: |
+          sudo chown root:root node_modules/electron/dist/chrome-sandbox
+          sudo chmod 4755 node_modules/electron/dist/chrome-sandbox
       - name: Verify offline Electron window
         run: xvfb-run -a ./node_modules/.bin/electron scripts/desktop-smoke.cjs
       - name: Retain desktop evidence
