@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { repositories as seededRepositories } from "./data";
 import { CompareAndExport } from "./CompareAndExport";
+import { LocalDoctorPanel } from "./LocalDoctorPanel";
 import { inspectRepository, scanPublicRepositories } from "./github";
 import type { Health, RepoInspection, RepoKind, Repository } from "./types";
 
-const OWNER = "SpidermanTotro";
+const OWNER = "HenricHuntsman";
 
 const kindLabels: Record<RepoKind | "all", string> = {
   all: "All repositories",
@@ -25,7 +26,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<RepoKind | "all">("all");
   const [scanning, setScanning] = useState(false);
-  const [scanMessage, setScanMessage] = useState("Showing verified audit snapshot.");
+  const [scanMessage, setScanMessage] = useState("Showing historical six-repository sample data, not a current scan.");
   const [scanError, setScanError] = useState(false);
   const [lastScan, setLastScan] = useState<Date | null>(null);
   const [inspections, setInspections] = useState<Record<string, RepoInspection>>({});
@@ -144,6 +145,8 @@ function App() {
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
         </section>
 
+        <LocalDoctorPanel repositories={repositories} />
+
         <CompareAndExport owner={OWNER} repositories={repositories} token={token} />
 
         <section className="workspace">
@@ -233,7 +236,7 @@ function App() {
         </section>
       </main>
 
-      <footer>RepoForge 0.4 · Compare and export · No destructive actions</footer>
+      <footer>RepoForge 0.7 · Local inventory and public GitHub checks · No destructive actions</footer>
     </div>
   );
 }
