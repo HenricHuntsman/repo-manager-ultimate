@@ -16,6 +16,8 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 - Latest GitHub Actions workflow status and date
 - Explicit no-workflow, unavailable, pending, success, and failure states
 - Read-only recursive tree comparison for duplicate review
+- Optional import of local Dragon Project Doctor JSON (read-only, browser-only, no upload)
+- Live GitHub scan defaults to the current `HenricHuntsman` account rather than the older username
 - Downloadable JSON cleanup-plan exports
 - Security-hardened Electron desktop wrapper
 - Isolated renderer with Node integration disabled
@@ -26,6 +28,8 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 - Token retained only in memory for the active window
 - No token persistence, export, logging, or build embedding
 - Explicit non-destructive design
+
+For local Ubuntu checkout and archive inventory, see [Dragon Project Doctor import](docs/LOCAL-DOCTOR-IMPORT.md). GitHub scan results and local filesystem evidence are kept separate. The seeded six-repository sample is historical, not a current account census.
 
 ## Run locally
 
