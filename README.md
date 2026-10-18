@@ -27,6 +27,10 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 - No token persistence, export, logging, or build embedding
 - Explicit non-destructive design
 
+## Free hosted web dashboard
+
+Prepare the existing RepoForge interface for **GitHub Pages** and optionally mirror it on **Cloudflare Pages**, so the same public dashboard can be opened from iPhone or desktop without the Ubuntu machine. See [free web-hosting instructions](docs/FREE-WEB-HOSTING.md). Static site publishing requires a one-time GitHub Pages setting; no site is claimed live until the deployment succeeds.
+
 ## Phone and cloud progress
 
 Run read-only public repository checks from [GitHub Actions](https://github.com/HenricHuntsman/repo-manager-ultimate/actions) on iPhone or desktop. See [Phone & Cloud Continuity](docs/MOBILE-CLOUD-CONTINUITY.md) for manual triggering, the scheduled Melbourne-time check-ins and what still requires a powered-on Ubuntu computer. These checks do not write code or include private repositories.
