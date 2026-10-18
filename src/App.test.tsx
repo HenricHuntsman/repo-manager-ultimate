@@ -27,7 +27,7 @@ describe("session-only token UI", () => {
 
     await user.click(screen.getByRole("button", { name: /run live scan/i }));
 
-    expect(scanPublicRepositories).toHaveBeenCalledWith("SpidermanTotro", "");
+    expect(scanPublicRepositories).toHaveBeenCalledWith("HenricHuntsman", "");
     expect(await screen.findByText("Live scan complete: 0 public repositories loaded.")).toBeInTheDocument();
   });
 
@@ -45,7 +45,7 @@ describe("session-only token UI", () => {
 
     await user.click(screen.getByRole("button", { name: /run live scan/i }));
     expect(scanPublicRepositories).toHaveBeenCalledWith(
-      "SpidermanTotro",
+      "HenricHuntsman",
       "github_pat_session_secret",
     );
     expect(await screen.findByText("Live scan complete: 0 public repositories loaded.")).toBeInTheDocument();
