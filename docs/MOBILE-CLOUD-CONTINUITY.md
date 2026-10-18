@@ -56,7 +56,7 @@ A running PC and secure access must be configured and validated separately.
 ## Development verification
 
 - `node --check scripts/cloud-continuity.mjs`
-- `node --test scripts/cloud-continuity.test.mjs`
+- `node --test scripts/cloud-continuity.node-check.mjs`
 - GitHub Actions workflow **Phone & Cloud Progress** should produce a
   `public-project-status` artifact on the feature branch before merging.
 - The scheduled jobs will not run until the workflow is on `main`.
