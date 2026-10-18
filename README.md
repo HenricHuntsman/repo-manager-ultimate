@@ -27,6 +27,10 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 - No token persistence, export, logging, or build embedding
 - Explicit non-destructive design
 
+## Phone and cloud progress
+
+Run read-only public repository checks from [GitHub Actions](https://github.com/HenricHuntsman/repo-manager-ultimate/actions) on iPhone or desktop. See [Phone & Cloud Continuity](docs/MOBILE-CLOUD-CONTINUITY.md) for manual triggering, the scheduled Melbourne-time check-ins and what still requires a powered-on Ubuntu computer. These checks do not write code or include private repositories.
+
 ## Run locally
 
 ```bash
