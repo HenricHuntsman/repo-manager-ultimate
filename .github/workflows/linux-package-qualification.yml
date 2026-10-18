@@ -1,7 +1,7 @@
 name: Linux package qualification
 on:
   push:
-    paths: [.github/workflows/linux-package-qualification.yml, package.json, package-lock.json, electron/**]
+    paths: [.github/workflows/linux-package-qualification.yml, package.json, package-lock.json, electron/**, scripts/desktop-smoke.cjs]
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,13 +18,21 @@ jobs:
       - name: Install Linux build prerequisites
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libarchive-tools rpm libgtk-3-0 libnss3 libasound2t64 libgbm1 libxtst6 libxss1 libsecret-1-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
+          sudo apt-get install -y --no-install-recommends xvfb xauth libarchive-tools rpm libgtk-3-0 libnss3 libasound2t64 libgbm1 libxtst6 libxss1 libsecret-1-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev
       - run: npm ci
       - run: npm test
       - name: Build Linux packages without publishing
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: npm run package:linux
+      - name: Verify offline Electron window
+        run: xvfb-run -a ./node_modules/.bin/electron scripts/desktop-smoke.cjs
+      - name: Retain desktop evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: desktop-startup-evidence
+          path: desktop-evidence/
       - name: Retain packages
         if: always()
         uses: actions/upload-artifact@v4
