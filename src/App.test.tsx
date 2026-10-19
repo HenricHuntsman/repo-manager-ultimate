@@ -59,3 +59,15 @@ describe("session-only token UI", () => {
     expect(screen.getByText("Public unauthenticated mode.")).toBeInTheDocument();
   });
 });
+
+describe("public Colab workbench access", () => {
+  it("offers an optional temporary Colab build without implying always-on hosting", () => {
+    render(<App />);
+    expect(screen.getByRole("region", { name: "Free Colab development workbench" })).toBeInTheDocument();
+    const open = screen.getByRole("link", { name: /open free colab workbench/i });
+    expect(open).toHaveAttribute("href", "https://colab.research.google.com/github/HenricHuntsman/repo-manager-ultimate/blob/main/colab/RepoForge_Greenlight_Workbench.ipynb");
+    expect(open).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.getByText(/colab is not a 24\/7 host/i)).toBeInTheDocument();
+    expect(screen.getByText(/RepoForge 0\.7/)).toBeInTheDocument();
+  });
+});
