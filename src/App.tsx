@@ -3,6 +3,7 @@ import { repositories as seededRepositories } from "./data";
 import { CompareAndExport } from "./CompareAndExport";
 import { FreeTools } from "./FreeTools";
 import { inspectRepository, scanPublicRepositories } from "./github";
+import { readPublicCache, savePublicCache } from "./publicCache";
 import type { Health, RepoInspection, RepoKind, Repository } from "./types";
 
 const OWNER = "HenricHuntsman";
@@ -23,11 +24,16 @@ const healthLabels: Record<Health, string> = {
 };
 
 function App() {
-  const [repositories, setRepositories] = useState<Repository[]>(seededRepositories);
+  const [cachedPublic] = useState(() => PUBLIC_HOSTED ? readPublicCache() : null);
+  const [repositories, setRepositories] = useState<Repository[]>(
+    () => cachedPublic?.repositories ?? seededRepositories,
+  );
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState<RepoKind | "all">("all");
   const [scanning, setScanning] = useState(false);
-  const [scanMessage, setScanMessage] = useState("Showing historical sample data. Run a live scan for current public repositories.");
+  const [scanMessage, setScanMessage] = useState(() => cachedPublic
+    ? `Showing browser-cached public data from ${new Date(cachedPublic.scannedAt).toLocaleString("en-AU")}. Run a scan to refresh.`
+    : "Showing historical sample data. Run a live scan for current public repositories.");
   const [scanError, setScanError] = useState(false);
   const [lastScan, setLastScan] = useState<Date | null>(null);
   const [inspections, setInspections] = useState<Record<string, RepoInspection>>({});
@@ -41,6 +47,7 @@ function App() {
     try {
       const live = await scanPublicRepositories(OWNER, token);
       setRepositories(live);
+      if (PUBLIC_HOSTED) savePublicCache(live);
       setLastScan(new Date());
       setScanMessage(`Live scan complete: ${live.length} public repositories loaded.`);
     } catch (error) {
