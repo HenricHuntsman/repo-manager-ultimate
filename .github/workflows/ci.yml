@@ -32,7 +32,7 @@ jobs:
       - name: Run tests
         run: npm test
       - name: Test dependency-free RepoForge Doctor
-        run: python3 -m unittest discover -s tests -p 'test_repo_doctor.py' -v
+        run: python3 -m unittest discover -s tests -p 'test_repoforge_doctor.py' -v
       - name: Validate Colab notebook structure and Python cell syntax
         run: |
           python3 - <<'PY'
