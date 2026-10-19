@@ -1,0 +1,35 @@
+# Independent fallback CI for an explicitly created GitLab mirror.
+# Dormant on GitHub; no GitLab account or remote has been configured here.
+stages:
+  - verify
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH'
+
+node-build-and-tests:
+  stage: verify
+  image: node:22-bookworm
+  variables:
+    ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
+    VITE_PUBLIC_HOSTED: "true"
+  script:
+    - npm ci --ignore-scripts --no-audit --no-fund
+    - npm test
+    - npm run build
+    - test -s dist/index.html
+  artifacts:
+    when: on_success
+    paths:
+      - dist/
+    expire_in: 3 days
+
+python-offline-recovery-tests:
+  stage: verify
+  image: python:3.13-bookworm
+  before_script:
+    - apt-get update -qq && apt-get install -y --no-install-recommends git >/dev/null
+  script:
+    - python3 -m unittest discover -s tests -p 'test_repoforge_doctor.py' -v
+    - python3 -m unittest discover -s tests -p 'test_git_recovery_backup.py' -v
