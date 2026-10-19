@@ -68,6 +68,12 @@ Never claim any provider will be universally more reliable or immune to outages.
 
 The **current GitHub repo is still primary**; this guide does not imply GitLab/Codeberg accounts have been created or synchronized.
 
+## Standalone CI without GitHub Actions
+
+The committed `.gitlab-ci.yml` is an independent build/test pipeline *template* for GitLab.com or compatible GitLab installations. Once you personally create and connect an authorized GitLab repository, GitLab can run the Vite build, React regression tests, Python Doctor tests, and offline Git-bundle recovery tests using its own runners. Until that first GitLab execution succeeds, the independent CI remains **unverified**.
+
+GitLab's free hosted compute has limits. Keep the first mirror read-only until its branches and artifacts have been checked; **never force-push an unrelated history**.
+
 ## Failure handling and validation
 
 | Failure | Expected outcome | Test |
