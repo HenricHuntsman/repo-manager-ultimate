@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { repositories as seededRepositories } from "./data";
 import { CompareAndExport } from "./CompareAndExport";
+import { FreeTools } from "./FreeTools";
 import { inspectRepository, scanPublicRepositories } from "./github";
 import type { Health, RepoInspection, RepoKind, Repository } from "./types";
 
@@ -160,6 +161,8 @@ function App() {
           <article><span>Needs attention</span><strong className="amber">{attention}</strong><small>review before action</small></article>
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
         </section>
+
+        <FreeTools />
 
         <CompareAndExport owner={OWNER} repositories={repositories} token={token} />
 
