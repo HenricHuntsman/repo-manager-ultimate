@@ -2,6 +2,20 @@
 
 RepoForge is a local-first repository health and cleanup dashboard. It makes active projects, experiments, upstream mirrors, CI state, and cleanup candidates understandable without performing destructive actions.
 
+## Open from iPhone or PC — works now
+
+These **GitHub-hosted links** work from a phone or computer without an Ubuntu session:
+
+- **[Public project hub / repository list](https://github.com/HenricHuntsman?tab=repositories)** — browse code, history and public projects.
+- **[Cloud progress reports](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/cloud-continuity.yml)** — run/view the read-only status scan; its completed runs include a short report and downloadable JSON.
+- **[Shared programming queue](https://github.com/HenricHuntsman/repo-manager-ultimate/issues/13)** — keep next actions in one place.
+- **[RepoForge build & test results](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/ci.yml)** — confirm the dashboard is building.
+- **[RepoForge website build / future Pages deployment](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/repoforge-website.yml)** — tested static build, but **not confirmed as a live public website**.
+- **[DragonForge Code](https://github.com/HenricHuntsman/dragonforge-code)** · **[Greenlight / mini-AGI](https://github.com/HenricHuntsman/mini-AGI)** · **[AgentFoundry](https://github.com/HenricHuntsman/AgentFoundry-instantly)** — public source and per-project Actions.
+
+The built React website requires **Settings → Pages → Source: GitHub Actions**, then a manual run of **Free RepoForge website** on `main` before a Pages URL is claimed live. [Instructions](docs/FREE-WEB-HOSTING.md). No GitHub token or private repo content belongs on public hosting. Public status checks **do not** train models, run local Ollama, or automatically fix code.
+
+---
 ## Version 0.7
 
 - Responsive repository health dashboard
