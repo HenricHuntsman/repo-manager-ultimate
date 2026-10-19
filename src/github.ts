@@ -70,7 +70,8 @@ function mapRepository(repo: GitHubRepository): Repository {
     language: repo.language || "Not detected",
     kind,
     health: score(repo, kind),
-    openPulls: repo.open_issues_count,
+    // GitHub open_issues_count includes issues and PRs; it is NOT an exact PR count.
+    openPulls: null,
     lastActivity: Number.isFinite(Date.parse(repo.pushed_at || ""))
       ? new Intl.DateTimeFormat("en-AU", {
         day: "numeric", month: "short", year: "numeric",
