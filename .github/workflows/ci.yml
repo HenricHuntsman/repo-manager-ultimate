@@ -31,3 +31,9 @@ jobs:
         run: npm run build
       - name: Run tests
         run: npm test
+      - name: Build public hosted Vercel variant
+        env:
+          VITE_PUBLIC_HOSTED: 'true'
+        run: |
+          npm run build
+          test -s dist/index.html
