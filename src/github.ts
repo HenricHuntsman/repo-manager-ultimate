@@ -47,7 +47,9 @@ function classify(repo: GitHubRepository): RepoKind {
 
 function score(repo: GitHubRepository, kind: RepoKind): Health {
   if (repo.archived || kind === "cleanup" || repo.size === 0) return "review";
-  const ageMs = Date.now() - new Date(repo.pushed_at).getTime();
+  const pushed = Date.parse(repo.pushed_at || "");
+  if (!Number.isFinite(pushed) || pushed > Date.now() + 24 * 60 * 60 * 1000) return "review";
+  const ageMs = Date.now() - pushed;
   return ageMs > 365 * 24 * 60 * 60 * 1000 ? "attention" : "healthy";
 }
 
@@ -69,10 +71,11 @@ function mapRepository(repo: GitHubRepository): Repository {
     kind,
     health: score(repo, kind),
     openPulls: repo.open_issues_count,
-    lastActivity: new Intl.DateTimeFormat("en-AU", {
-      day: "numeric", month: "short", year: "numeric",
-    }).format(new Date(repo.pushed_at)),
-    checks: repo.archived ? "Repository archived" : "Live public metadata loaded",
+    lastActivity: Number.isFinite(Date.parse(repo.pushed_at || ""))
+      ? new Intl.DateTimeFormat("en-AU", {
+        day: "numeric", month: "short", year: "numeric",
+      }).format(new Date(repo.pushed_at)) : "Unknown",
+    checks: repo.archived ? "Repository archived" : "Public metadata only; CI not verified",
     recommendation: recommendation(repo, kind),
     htmlUrl: repo.html_url,
     stars: repo.stargazers_count,
@@ -80,20 +83,57 @@ function mapRepository(repo: GitHubRepository): Repository {
   };
 }
 
-export async function scanPublicRepositories(owner: string, token?: string): Promise<Repository[]> {
-  const response = await fetch(
-    `${API_ROOT}/users/${encodeURIComponent(owner)}/repos?per_page=100&sort=pushed`,
-    { headers: apiHeaders(token) },
-  );
+const MAX_PUBLIC_PAGES = 5;
+const PAGE_SIZE = 100;
 
-  if (!response.ok) {
-    const remaining = response.headers.get("x-ratelimit-remaining");
-    const hint = remaining === "0" ? " GitHub's public API rate limit was reached." : "";
-    throw new Error(`GitHub scan failed (HTTP ${response.status}).${hint}`);
+async function fetchGitHub(url: string, headers: HeadersInit): Promise<Response> {
+  // Bounded retry for transient server errors; don't retry auth/rate limits.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    let response: Response;
+    try {
+      response = await fetch(url, { headers, signal: AbortSignal.timeout(12000) });
+    } catch (error) {
+      if (attempt === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        continue;
+      }
+      throw new Error("GitHub is unreachable or timed out. Existing repository data was preserved.");
+    }
+    if (![502, 503, 504].includes(response.status) || attempt === 1) return response;
+    await new Promise((resolve) => setTimeout(resolve, 250));
   }
+  throw new Error("GitHub request failed after one retry.");
+}
 
-  const payload = (await response.json()) as GitHubRepository[];
-  return payload.map(mapRepository);
+function githubFailure(response: Response, context: string): Error {
+  const remaining = response.headers.get("x-ratelimit-remaining");
+  const rateLimited = response.status === 429 || (response.status === 403 && remaining === "0");
+  const hint = rateLimited
+    ? " GitHub API rate limit reached. Try later; the previous results are preserved."
+    : " Try later; the previous results are preserved.";
+  return new Error(`${context} (HTTP ${response.status}).${hint}`);
+}
+
+export async function scanPublicRepositories(owner: string, token?: string): Promise<Repository[]> {
+  const repositories: Repository[] = [];
+  for (let page = 1; page <= MAX_PUBLIC_PAGES; page++) {
+    const response = await fetchGitHub(
+      `${API_ROOT}/users/${encodeURIComponent(owner)}/repos?per_page=${PAGE_SIZE}&page=${page}&sort=pushed`,
+      apiHeaders(token),
+    );
+    if (!response.ok) throw githubFailure(response, "GitHub scan failed");
+    let payload: unknown;
+    try { payload = await response.json(); }
+    catch { throw new Error("GitHub returned invalid JSON. Existing results were preserved."); }
+    if (!Array.isArray(payload) || payload.some((row) => !row || typeof row !== "object" || typeof row.name !== "string")) {
+      throw new Error("GitHub returned an unexpected repository list. Existing results were preserved.");
+    }
+    const pageResults = (payload as GitHubRepository[]).map(mapRepository);
+    repositories.push(...pageResults);
+    if (pageResults.length < PAGE_SIZE) return repositories;
+  }
+  // Never silently publish a first-page or truncated list as 'complete'.
+  throw new Error(`More than ${MAX_PUBLIC_PAGES * PAGE_SIZE} repositories may exist. Scan truncated; existing results were preserved.`);
 }
 
 interface WorkflowRun {
@@ -109,56 +149,57 @@ interface WorkflowResponse {
 
 export async function inspectRepository(owner: string, name: string, token?: string): Promise<import("./types").RepoInspection> {
   const headers = apiHeaders(token);
-  const [pullResponse, workflowResponse] = await Promise.all([
-    fetch(`${API_ROOT}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/pulls?state=open&per_page=30`, { headers }),
-    fetch(`${API_ROOT}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/actions/runs?per_page=1`, { headers }),
-  ]);
-
-  if (pullResponse.status === 403 || workflowResponse.status === 403) {
-    return {
-      openPulls: null,
-      workflowName: "API limit reached",
-      workflowState: "unavailable",
-      message: "Wait for GitHub's public API limit to reset, then retry.",
-    };
+  const base = `${API_ROOT}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
+  // One workflow fetch, plus bounded PR pagination; never call issue count a PR count.
+  const workflowRequest = fetchGitHub(`${base}/actions/runs?per_page=1`, headers);
+  const prRequest = (async () => {
+    let count = 0;
+    for (let page = 1; page <= 5; page++) {
+      const response = await fetchGitHub(`${base}/pulls?state=open&per_page=100&page=${page}`, headers);
+      if (!response.ok) return { count: null, note: `Pull-request count unavailable (HTTP ${response.status}).` };
+      const data: unknown = await response.json();
+      if (!Array.isArray(data)) return { count: null, note: "Unexpected pull-request response." };
+      count += data.length;
+      if (data.length < 100) return { count, note: undefined };
+    }
+    return { count: null, note: "More than 500 pull requests; exact count not verified." };
+  })();
+  const [pull, workflowResponse] = await Promise.all([prRequest, workflowRequest]);
+  if (workflowResponse.status === 429 || (workflowResponse.status === 403 && workflowResponse.headers.get("x-ratelimit-remaining") === "0")) {
+    return { openPulls: pull.count, workflowName: "GitHub API limit reached",
+      workflowState: "unavailable", message: "Retry after the rate limit resets." };
   }
-
-  const openPulls = pullResponse.ok
-    ? ((await pullResponse.json()) as unknown[]).length
-    : null;
-
   if (workflowResponse.status === 404) {
-    return { openPulls, workflowName: "No Actions workflow", workflowState: "none" };
+    return { openPulls: pull.count, workflowName: "Actions not accessible", workflowState: "unavailable",
+      message: pull.note || "Actions may be disabled or unavailable. Do not assume no workflows exist." };
   }
-
   if (!workflowResponse.ok) {
-    return {
-      openPulls,
-      workflowName: `Workflow check unavailable (HTTP ${workflowResponse.status})`,
-      workflowState: "unavailable",
-    };
+    return { openPulls: pull.count, workflowName: `Workflow check unavailable (HTTP ${workflowResponse.status})`,
+      workflowState: "unavailable", message: pull.note };
   }
-
-  const workflows = (await workflowResponse.json()) as WorkflowResponse;
+  let workflows: WorkflowResponse;
+  try { workflows = await workflowResponse.json() as WorkflowResponse; }
+  catch { return { openPulls: pull.count, workflowName: "Workflow response invalid",
+    workflowState: "unavailable", message: pull.note }; }
+  if (!Array.isArray(workflows.workflow_runs)) return {
+    openPulls: pull.count, workflowName: "Unexpected workflow response",
+    workflowState: "unavailable", message: pull.note,
+  };
   const latest = workflows.workflow_runs[0];
-  if (!latest) {
-    return { openPulls, workflowName: "No workflow runs found", workflowState: "none" };
-  }
-
-  const workflowState =
-    latest.status !== "completed"
-      ? "pending"
-      : latest.conclusion === "success"
-        ? "success"
-        : "failure";
-
+  if (!latest) return { openPulls: pull.count, workflowName: "No workflow runs found",
+    workflowState: "none", message: pull.note };
+  const workflowState = latest.status !== "completed" ? "pending"
+    : latest.conclusion === "success" ? "success"
+    : latest.conclusion === "failure" ? "failure" : "unavailable";
+  const updated = Date.parse(latest.updated_at);
   return {
-    openPulls,
-    workflowName: latest.name,
+    openPulls: pull.count,
+    workflowName: latest.name || "Unnamed workflow",
     workflowState,
-    workflowUpdatedAt: new Intl.DateTimeFormat("en-AU", {
-      day: "numeric", month: "short", year: "numeric",
-    }).format(new Date(latest.updated_at)),
+    workflowUpdatedAt: Number.isFinite(updated)
+      ? new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(updated))
+      : undefined,
+    message: pull.note,
   };
 }
 
