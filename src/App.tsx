@@ -17,8 +17,8 @@ const kindLabels: Record<RepoKind | "all", string> = {
 };
 
 const healthLabels: Record<Health, string> = {
-  healthy: "Healthy",
-  attention: "Needs attention",
+  healthy: "Recent activity",
+  attention: "Older activity",
   review: "Review",
 };
 
@@ -107,7 +107,7 @@ function App() {
       <main>
         <section className="hero">
           <p className="eyebrow">ACCOUNT OVERVIEW · {OWNER}</p>
-          <h1>Know what is healthy, what needs work, and what is safe to clean.</h1>
+          <h1>See repository activity, verify CI, and plan safe improvements.</h1>
           <p className="heroCopy">
             A local-first dashboard for repository health, activity, duplicates,
             upstream tracking, and deliberate cleanup.
@@ -157,8 +157,8 @@ function App() {
 
         <section className="stats" aria-label="Repository summary">
           <article><span>Total tracked</span><strong>{repositories.length}</strong><small>public scan or historical sample</small></article>
-          <article><span>Healthy</span><strong className="green">{healthy}</strong><small>recent non-cleanup activity</small></article>
-          <article><span>Needs attention</span><strong className="amber">{attention}</strong><small>review before action</small></article>
+          <article><span>Recently active</span><strong className="green">{healthy}</strong><small>not proof of passing tests</small></article>
+          <article><span>Review or older</span><strong className="amber">{attention}</strong><small>CI status checked separately</small></article>
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
         </section>
 
@@ -187,7 +187,7 @@ function App() {
           </div>
 
           <div className="tableHeader">
-            <div><h2>Repository health</h2><p>{filtered.length} result{filtered.length === 1 ? "" : "s"}</p></div>
+            <div><h2>Repository activity and CI</h2><p>{filtered.length} result{filtered.length === 1 ? "" : "s"}</p></div>
             <span className="safeBadge">Read-only safe mode</span>
           </div>
 
