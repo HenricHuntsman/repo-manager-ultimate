@@ -62,7 +62,8 @@ def make_bundle(source: str, destination: Path) -> Path:
         bundle = working / "repository.bundle"
         run("git", "-C", str(mirror), "bundle", "create", str(bundle), "--all")
         run("git", "-C", str(mirror), "bundle", "verify", str(bundle))
-        checksum = hashlib.file_digest(bundle.open("rb"), "sha256").hexdigest()
+        with bundle.open("rb") as bundle_file:
+            checksum = hashlib.file_digest(bundle_file, "sha256").hexdigest()
         ref_lines = [line.split(" ", 1)[-1] for line in heads.splitlines()]
         manifest = {
             "schema_version": 1,
