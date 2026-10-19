@@ -44,6 +44,13 @@ const items: Array<{
     href: "https://drive.google.com/drive/folders/18ymYRJ7FRTV56ZJPvR-WMZi9XYWjbDpU",
   },
   {
+    name: "Independent Git recovery",
+    group: "recovery",
+    mode: "Offline Git bundle",
+    note: "Back up and restore Git history without depending on GitHub. Requires your own storage; never publishes secrets.",
+    href: "https://github.com/HenricHuntsman/repo-manager-ultimate/blob/main/docs/STABILITY-AND-RECOVERY.md",
+  },
+  {
     name: "Safe project recovery",
     group: "recovery",
     mode: "Reusable local skill",
