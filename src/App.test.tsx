@@ -71,3 +71,20 @@ describe("public Colab workbench access", () => {
     expect(screen.getByText(/RepoForge 0\.7/)).toBeInTheDocument();
   });
 });
+
+describe("free tools catalog", () => {
+  it("shows safe free tools and filters to Greenlight recovery", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    expect(screen.getByRole("region", { name: "Free tools and skills" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open RepoForge Doctor" })).toHaveAttribute(
+      "href", "https://github.com/HenricHuntsman/repo-manager-ultimate/blob/main/tools/repoforge_doctor.py",
+    );
+    expect(screen.getByText(/links never start training or paid API requests/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Recovery" }));
+    expect(screen.getByRole("button", { name: "Recovery" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("link", { name: "Open Greenlight evidence" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Open Web build and tests" })).not.toBeInTheDocument();
+  });
+});
