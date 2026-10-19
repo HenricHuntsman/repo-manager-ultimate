@@ -36,6 +36,14 @@ python3 tools/git_recovery_backup.py \
 
 Each run creates a new timestamped folder with `repository.bundle` and a SHA-256 manifest; it **never force-pushes**, overwrites old backup files or touches your original checkout. The command requires local Git and storage. CI covers a complete offline round-trip restore including a tag.
 
+To verify **an existing** archive entirely offline, including a disposable restore and Git object integrity check:
+
+```bash
+python3 tools/verify_git_recovery.py "/path/to/backup/git-recovery-YYYYMMDDTHHMMSSZ-xxxxxxxx"
+```
+
+The verifier checks the saved SHA-256, declared branch/tag references, the local restored Git repository and `git fsck --full`. It does not require GitHub, GitLab, Vercel, Colab or any credentials. A failed check exits nonzero and reports **NOT VERIFIED**; no backup source is modified. **A newly created or verified bundle still needs to be copied to a different physical disk or trusted encrypted offsite storage to survive PC/disk loss.** Backup manifests redact original local checkout paths.
+
 To restore from an available bundle after an outage:
 
 ```bash

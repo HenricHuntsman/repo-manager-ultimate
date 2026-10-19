@@ -8,6 +8,7 @@ import tempfile
 import unittest
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
 import git_recovery_backup as backup
+import verify_git_recovery as verifier
 
 
 def git(*args):
@@ -45,6 +46,8 @@ class BackupTests(unittest.TestCase):
             with bundle.open("rb") as source_file:
                 expected_hash = hashlib.file_digest(source_file, "sha256").hexdigest()
             self.assertEqual(manifest["sha256"], expected_hash)
+            self.assertEqual(manifest["source_type"], "local")
+            self.assertNotIn(str(src), json.dumps(manifest))
             self.assertIn("refs/tags/v0.1", manifest["refs"])
             restored = root / "restored"
             git("clone", bundle, restored)
@@ -70,6 +73,53 @@ class BackupTests(unittest.TestCase):
             self.assertNotEqual(one, two)
             self.assertTrue((one / "repository.bundle").exists())
             self.assertTrue((two / "repository.bundle").exists())
+
+
+class OfflineVerifyTests(unittest.TestCase):
+    def make_repo_backup(self, root):
+        source = root / "source"
+        source.mkdir()
+        git("init", "-b", "main", source)
+        git("-C", source, "config", "user.email", "repo@invalid.example")
+        git("-C", source, "config", "user.name", "RepoForge Test")
+        (source / "file.txt").write_text("immutable historical sample")
+        git("-C", source, "add", ".")
+        git("-C", source, "commit", "-m", "baseline")
+        git("-C", source, "tag", "snapshot-v1")
+        return backup.make_bundle(str(source), root / "backup")
+
+    def test_disposable_restore_verifies_commit_objects_and_tags(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = self.make_repo_backup(Path(tmp))
+            before = (folder / "repository.bundle").read_bytes()
+            result = verifier.verify_backup(folder)
+            self.assertEqual(result["status"], "verified")
+            self.assertTrue(result["offline"])
+            self.assertEqual(result["declared_refs"], 2)
+            self.assertEqual((folder / "repository.bundle").read_bytes(), before)
+
+    def test_tampering_bundle_fails_without_changing_backup(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = self.make_repo_backup(Path(tmp))
+            bundle = folder / "repository.bundle"
+            with bundle.open("ab") as file:
+                file.write(b"tampered")
+            with self.assertRaisesRegex(verifier.BackupVerificationError, "SHA-256 mismatch"):
+                verifier.verify_backup(folder)
+
+    def test_missing_manifest_and_unexpected_refs_are_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = self.make_repo_backup(Path(tmp))
+            manifest_file = folder / "manifest.json"
+            data = json.loads(manifest_file.read_text())
+            data["refs"] = ["refs/heads/fictional"]
+            manifest_file.write_text(json.dumps(data))
+            with self.assertRaisesRegex(verifier.BackupVerificationError, "missing declared refs"):
+                verifier.verify_backup(folder)
+            manifest_file.unlink()
+            with self.assertRaisesRegex(verifier.BackupVerificationError, "Missing manifest"):
+                verifier.verify_backup(folder)
+
 
 
 if __name__ == "__main__":

@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
-import re
 import shutil
 import subprocess
 import tempfile
@@ -68,7 +67,8 @@ def make_bundle(source: str, destination: Path) -> Path:
         manifest = {
             "schema_version": 1,
             "created_utc": datetime.now(timezone.utc).isoformat(),
-            "source": source,
+            "source": source if source.startswith("https://") else "local Git directory (path redacted)",
+            "source_type": "remote_public_https" if source.startswith("https://") else "local",
             "sha256": checksum,
             "bundle": bundle.name,
             "refs": ref_lines,
