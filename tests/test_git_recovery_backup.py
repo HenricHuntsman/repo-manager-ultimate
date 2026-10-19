@@ -46,6 +46,8 @@ class BackupTests(unittest.TestCase):
             with bundle.open("rb") as source_file:
                 expected_hash = hashlib.file_digest(source_file, "sha256").hexdigest()
             self.assertEqual(manifest["sha256"], expected_hash)
+            self.assertEqual(manifest["source_type"], "local")
+            self.assertNotIn(str(src), json.dumps(manifest))
             self.assertIn("refs/tags/v0.1", manifest["refs"])
             restored = root / "restored"
             git("clone", bundle, restored)
