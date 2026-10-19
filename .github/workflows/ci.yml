@@ -33,6 +33,8 @@ jobs:
         run: npm test
       - name: Test dependency-free RepoForge Doctor
         run: python3 -m unittest discover -s tests -p 'test_repoforge_doctor.py' -v
+      - name: Test offline Git backup and restore
+        run: python3 -m unittest discover -s tests -p 'test_git_recovery_backup.py' -v
       - name: Validate Colab notebook structure and Python cell syntax
         run: |
           python3 - <<'PY'
