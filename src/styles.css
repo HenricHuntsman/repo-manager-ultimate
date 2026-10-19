@@ -111,3 +111,32 @@ footer { text-align:center;color:#5d728e;padding:30px;font-size:12px; }
 .tokenPanel h2{margin:5px 0 8px}.tokenPanel p{color:#8496ad;line-height:1.5;margin:0}
 .tokenPanel label span,.tokenPanel label small{display:block;color:#8196af;font-size:11px}.tokenPanel input{width:100%;margin:7px 0;padding:11px;color:#e4edf9;background:#081522;border:1px solid #29415e;border-radius:9px}
 @media(max-width:760px){.tokenPanel{grid-template-columns:1fr}}
+
+
+/* An optional web-first Colab workbench, not a hosting or subscription requirement. */
+.labPanel { display:flex; align-items:center; justify-content:space-between; gap:22px; margin:24px 0 28px; padding:21px 22px; background:linear-gradient(110deg,rgba(23,50,81,.86),rgba(12,28,49,.88)); border:1px solid #2b4a70; border-radius:16px; }
+.labPanel h2 { font-size:19px; letter-spacing:-.02em; margin:5px 0 7px; }
+.labPanel p:not(.eyebrow) { color:#9aafc9; font-size:13px; line-height:1.6; margin:0; max-width:620px; }
+.labPanel a { flex-shrink:0; text-align:center; color:#e6f0ff; background:#184fa6; border:1px solid #4f80de; padding:12px 14px; border-radius:10px; text-decoration:none; font-weight:700; font-size:13px; }
+.labPanel a:hover, .labPanel a:focus-visible { background:#2863bc; outline-offset:3px; }
+@media(max-width:700px){.labPanel{flex-direction:column;align-items:stretch;padding:17px}.labPanel a{width:100%}}
+
+
+/* Free tools and skills: filterable links, never surprise paid operations. */
+.freeTools{margin:22px 0 28px;padding:22px;background:rgba(8,20,35,.88);border:1px solid #284662;border-radius:20px;}
+.toolHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;}
+.toolHead h2{font-size:23px;margin:4px 0 6px;}
+.toolHead p:not(.eyebrow){margin:0;color:#91a6bf;font-size:13px;line-height:1.6;}
+.toolFilters{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0;}
+.toolFilters button{border:1px solid #294360;background:#0a1d30;color:#a8bfdc;border-radius:9px;padding:9px 12px;}
+.toolFilters button.selected,.toolFilters button[aria-pressed="true"]{background:#1e4b8d;border-color:#6b9efa;color:white;}
+.toolCards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;}
+.toolCards article{display:flex;flex-direction:column;padding:16px;border:1px solid #294360;border-radius:13px;background:#0c2138;min-width:0;}
+.toolMode{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#87b5ff;font-weight:750;}
+.toolCards h3{font-size:17px;margin:12px 0 7px;}
+.toolCards p{flex:1;color:#9aafc9;font-size:12px;line-height:1.6;margin:0 0 15px;}
+.toolCards a{display:inline-block;color:#d6e6ff;text-decoration:none;font-weight:700;font-size:13px;}
+.toolCards a:hover,.toolCards a:focus-visible{text-decoration:underline;}
+.freeTools>small{display:block;margin-top:16px;color:#7f94af;line-height:1.6;}
+@media(max-width:900px){.toolCards{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:580px){.freeTools{padding:15px}.toolCards{grid-template-columns:1fr}.toolHead{display:block}.toolHead .safeBadge{display:inline-block;margin-top:12px}}

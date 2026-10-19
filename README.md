@@ -41,6 +41,17 @@ The built React website requires **Settings → Pages → Source: GitHub Actions
 - No token persistence, export, logging, or build embedding
 - Explicit non-destructive design
 
+## Free homegrown tools, Colab and reusable skills
+
+RepoForge now includes a filterable **Free Toolbox** alongside the live public repo dashboard.
+
+- **[Colab workbench](https://colab.research.google.com/github/HenricHuntsman/repo-manager-ultimate/blob/main/colab/RepoForge_Greenlight_Workbench.ipynb)**: rebuild, test and temporarily preview this React/Vite dashboard in a CPU Colab session (no paid model API, token or training requirement). The notebook can optionally inspect saved Greenlight **file presence** after explicit Drive authorization. It never restores or trains the historical weights automatically.
+- **RepoForge Doctor CLI**: `python3 tools/repoforge_doctor.py repos` reads limited public GitHub metadata, while `python3 tools/repoforge_doctor.py runtime` inspects nonsecret runtime basics. No account token required. Outputs to stdout; `--output path.json` saves a report only on request, refusing to overwrite existing files.
+- **Reusable local workflow skills**: [Repo audit](skills/repoforge-audit/SKILL.md), [Greenlight recovery](skills/greenlight-recovery/SKILL.md), [Colab session](skills/colab-session/SKILL.md). These are source-controlled instructions for future development work, not automatically installed agents, new service accounts or subscription features.
+- **Archived vs live evidence**: [Colab and Greenlight guide](docs/FREE-COLAB-WORKBENCH.md) documents 12 October 2026 Greenlight tests separately from live GitHub/Colab execution.
+
+The static website can remain online without your Ubuntu PC. Colab runtimes are temporary and limited, and some platforms' free-tier rules or usage limits apply; no paid model API is needed for the RepoForge workbench. The historical native Greenlight checkpoint is still not recovered.
+
 ## Free hosted web dashboard
 
 Prepare the existing RepoForge interface for **GitHub Pages** and optionally mirror it on **Cloudflare Pages**, so the same public dashboard can be opened from iPhone or desktop without the Ubuntu machine. See [free web-hosting instructions](docs/FREE-WEB-HOSTING.md). Static site publishing requires a one-time GitHub Pages setting; no site is claimed live until the deployment succeeds.

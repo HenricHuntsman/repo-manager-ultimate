@@ -31,6 +31,25 @@ jobs:
         run: npm run build
       - name: Run tests
         run: npm test
+      - name: Test dependency-free RepoForge Doctor
+        run: python3 -m unittest discover -s tests -p 'test_repoforge_doctor.py' -v
+      - name: Validate Colab notebook structure and Python cell syntax
+        run: |
+          python3 - <<'PY'
+          import ast
+          import json
+          from pathlib import Path
+          file = Path("colab/RepoForge_Greenlight_Workbench.ipynb")
+          nb = json.loads(file.read_text(encoding="utf-8"))
+          assert nb["nbformat"] == 4
+          assert len(nb["cells"]) >= 6
+          for i, cell in enumerate(nb["cells"]):
+              if cell["cell_type"] == "code":
+                  assert not cell.get("outputs"), f"Saved execution output in cell {i}"
+                  assert cell.get("execution_count") is None
+                  ast.parse("".join(cell["source"]), filename=f"{file}:cell-{i}")
+          print(f"Validated {len(nb['cells'])} notebook cells; no saved runtime outputs.")
+          PY
       - name: Build public hosted Vercel variant
         env:
           VITE_PUBLIC_HOSTED: 'true'

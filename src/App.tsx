@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { repositories as seededRepositories } from "./data";
 import { CompareAndExport } from "./CompareAndExport";
+import { FreeTools } from "./FreeTools";
 import { inspectRepository, scanPublicRepositories } from "./github";
 import type { Health, RepoInspection, RepoKind, Repository } from "./types";
 
@@ -124,6 +125,20 @@ function App() {
           </div>
         </section>
 
+        <section className="labPanel" aria-label="Free Colab development workbench">
+          <div>
+            <p className="eyebrow">OPTIONAL FREE DEVELOPMENT LAB</p>
+            <h2>Run RepoForge in a temporary Colab session</h2>
+            <p>Rebuild the same public dashboard, run tests and preview it from a browser.
+              Greenlight report checks are optional and read-only. Colab is not a 24/7 host.</p>
+          </div>
+          <a
+            href="https://colab.research.google.com/github/HenricHuntsman/repo-manager-ultimate/blob/main/colab/RepoForge_Greenlight_Workbench.ipynb"
+            target="_blank"
+            rel="noopener noreferrer"
+          >Open free Colab workbench ↗</a>
+        </section>
+
         {!PUBLIC_HOSTED && (
         <section className="tokenPanel">
           <div>
@@ -146,6 +161,8 @@ function App() {
           <article><span>Needs attention</span><strong className="amber">{attention}</strong><small>review before action</small></article>
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
         </section>
+
+        <FreeTools />
 
         <CompareAndExport owner={OWNER} repositories={repositories} token={token} />
 
@@ -236,7 +253,7 @@ function App() {
         </section>
       </main>
 
-      <footer>RepoForge 0.4 · Compare and export · No destructive actions</footer>
+      <footer>RepoForge 0.7 · Compare and export · No destructive actions</footer>
     </div>
   );
 }

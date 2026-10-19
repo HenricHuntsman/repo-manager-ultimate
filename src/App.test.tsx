@@ -59,3 +59,32 @@ describe("session-only token UI", () => {
     expect(screen.getByText("Public unauthenticated mode.")).toBeInTheDocument();
   });
 });
+
+describe("public Colab workbench access", () => {
+  it("offers an optional temporary Colab build without implying always-on hosting", () => {
+    render(<App />);
+    expect(screen.getByRole("region", { name: "Free Colab development workbench" })).toBeInTheDocument();
+    const open = screen.getByRole("link", { name: /open free colab workbench/i });
+    expect(open).toHaveAttribute("href", "https://colab.research.google.com/github/HenricHuntsman/repo-manager-ultimate/blob/main/colab/RepoForge_Greenlight_Workbench.ipynb");
+    expect(open).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.getByText(/colab is not a 24\/7 host/i)).toBeInTheDocument();
+    expect(screen.getByText(/RepoForge 0\.7/)).toBeInTheDocument();
+  });
+});
+
+describe("free tools catalog", () => {
+  it("shows safe free tools and filters to Greenlight recovery", async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    expect(screen.getByRole("region", { name: "Free tools and skills" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Open RepoForge Doctor" })).toHaveAttribute(
+      "href", "https://github.com/HenricHuntsman/repo-manager-ultimate/blob/main/tools/repoforge_doctor.py",
+    );
+    expect(screen.getByText(/links never start training or paid API requests/i)).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Recovery" }));
+    expect(screen.getByRole("button", { name: "Recovery" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("link", { name: "Open Greenlight evidence" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Open Web build and tests" })).not.toBeInTheDocument();
+  });
+});
