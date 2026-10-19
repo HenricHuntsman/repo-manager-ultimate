@@ -7,7 +7,7 @@ export interface Repository {
   language: string;
   kind: RepoKind;
   health: Health;
-  openPulls: number;
+  openPulls: number | null;
   lastActivity: string;
   checks: string;
   recommendation: string;
