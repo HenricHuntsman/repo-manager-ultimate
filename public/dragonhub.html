@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'none'; img-src 'self' data:; form-action 'none'; base-uri 'none'">
+<title>DragonHub Bridge | RepoForge</title>
+<link rel="stylesheet" href="/dragonhub.css"><script src="/dragonhub.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header><nav><a class="brand" href="/">◆ RepoForge <span>/ DragonHub</span></a><small>INTEGRATION PREVIEW · READ ONLY</small></nav></header>
+<main id="main">
+<div class="eyebrow">FORGEJO × MCP × CHATGPT</div>
+<section class="hero">
+<div><h1>One workspace.<br><em>Connected when verified.</em></h1>
+<p class="lead">Your existing Forgejo and MCP server belong on Ubuntu. This page helps confirm local status safely—and never pretends the ChatGPT connection is live.</p>
+<a class="button" href="#import">Check my Ubuntu report →</a></div>
+<div class="stack" aria-label="Connection architecture">
+<div class="node">CHATGPT <strong>Plugin / ChatGPT Sites</strong><span>Integration pending</span></div>
+<div class="arrow">↓ &nbsp; Authenticated MCP connection</div>
+<div class="node">SECURE BRIDGE <strong>Private tunnel</strong><span>Not yet configured</span></div>
+<div class="arrow">↓ &nbsp; Outbound connection only</div>
+<div class="node">UBUNTU <strong>DragonHub MCP</strong><span>127.0.0.1:8787 → Forgejo :3000</span></div>
+</div>
+</section>
+<div class="section"><div><div class="eyebrow">CONNECTION HEALTH</div><h2>What is actually working?</h2></div><small id="report-time">Awaiting local report</small></div>
+<div class="cards">
+<article class="card" data-service="forgejo"><span class="pill">UNVERIFIED</span><h3>Forgejo API</h3><p>Ubuntu · port 3000</p><div class="detail">Waiting for your local read-only check.</div></article>
+<article class="card" data-service="mcp"><span class="pill">UNVERIFIED</span><h3>MCP transport</h3><p>Ubuntu · port 8787</p><div class="detail">Waiting for your local read-only check.</div></article>
+<article class="card" data-service="chatgpt"><span class="pill pending">NOT CONNECTED</span><h3>ChatGPT plugin</h3><p>Cloud bridge</p><div class="detail">Only a real tool call from ChatGPT can verify this.</div></article>
+</div>
+<section class="import" id="import"><div><div class="eyebrow">ZERO-CREDENTIAL DIAGNOSTIC</div><h2>Import a local status report</h2><p>Run the exporter on Ubuntu, then import its JSON here. It contains HTTP status codes—not API tokens, repository contents, or response bodies. Your file is read only inside the browser.</p><label class="upload" for="report-file">Choose status JSON →</label><input type="file" id="report-file" accept=".json,application/json"><p id="report-message" role="status" aria-live="polite">No report imported.</p></div><div class="terminal"><small>UBUNTU TERMINAL · READ ONLY</small><pre>python3 tools/dragonhub_readonly_export.py \
+  --output "$HOME/Downloads/dragonhub-status.json"</pre><p>Run from your RepoForge checkout. An HTTP 403 means reachable but refusing access, not “connected.”</p></div></section>
+<div class="section"><div><div class="eyebrow">SAFE PATH TO CHATGPT</div><h2>Four checks before enabling tools</h2></div></div>
+<ol class="steps"><li><b>Verify local services</b><p>Inspect Forgejo API and MCP protocol, not just the listening ports.</p></li><li><b>Secure the source</b><p>Upgrade unsupported Forgejo 11, rotate exposed credentials, create read-only token.</p></li><li><b>Connect privately</b><p>Use an approved private tunnel or authenticated HTTPS MCP service.</p></li><li><b>Prove it in ChatGPT</b><p>Discover tools and read a real repository, then cross-check the Forgejo UI.</p></li></ol>
+<footer>DragonHub Bridge · No token storage · No background polling · No automatic service changes</footer>
+</main>
+</body>
+</html>
