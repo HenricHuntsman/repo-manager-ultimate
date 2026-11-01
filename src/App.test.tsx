@@ -63,7 +63,7 @@ describe("session-only token UI", () => {
 describe("public Colab workbench access", () => {
   it("starts from a dated public snapshot with the latest project update", () => {
     render(<App />);
-    expect(screen.getByText("Showing 34 public repositories checked 1 November 2026. Run a live scan to refresh.")).toBeInTheDocument();
+    expect(screen.getByText("Showing 35 public repositories checked 2 November 2026. Run a live scan to refresh.")).toBeInTheDocument();
     expect(screen.queryByText("Test-New-")).not.toBeInTheDocument();
     expect(screen.queryByText("nEW-tEST")).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /read the latest project update/i })).toHaveAttribute("href",
