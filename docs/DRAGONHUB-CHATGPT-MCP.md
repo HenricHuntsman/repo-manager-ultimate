@@ -17,7 +17,7 @@ From your **RepoForge checkout** on Ubuntu:
 python3 tools/dragonhub_readonly_export.py --output "$HOME/Downloads/dragonhub-status.json"
 ```
 
-Open the site at `/dragonhub.html` on desktop or mobile and select the JSON file. The page processes it locally in browser memory; the Content-Security-Policy blocks outgoing requests. The script contacts only `127.0.0.1`, follows no redirects, sends no token, reads no response body, and refuses to overwrite an existing report. A 403 is classified as `refused`, not `connected`. Each report reflects one point in time.
+Open the site at `/dragonhub.html` on desktop or mobile and select the JSON file. The importer processes it locally in browser memory. Separately, the public repository browser reads `https://api.github.com`; the Content-Security-Policy allows only that origin and the page's own origin for connections. The exporter contacts only `127.0.0.1`, follows no redirects, sends no token, reads no response body, and refuses to overwrite an existing report. A 403 is classified as `refused`, not `connected`. Each report reflects one point in time.
 
 ## Production-safe next steps
 
@@ -32,7 +32,7 @@ The web page does not perform writes, pushes, merges, restarts, CI retries or ad
 ## Provenance
 
 - `HenricHuntsman/repo-manager-ultimate` is the public RepoForge web source.
-- `HenricHuntsman/dragonhub-agent` is a **private local PR reviewer**, and no private source was copied into this page.
+- Private repository source is excluded from this public page.
 - `dragonhub-mcp.service` is on the Ubuntu machine, not part of a Vercel deployment.
 
 ## Local tests

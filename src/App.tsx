@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { repositories as seededRepositories } from "./data";
+import { repositories as seededRepositories, snapshotCheckedAt } from "./data";
 import { CompareAndExport } from "./CompareAndExport";
 import { FreeTools } from "./FreeTools";
 import { inspectRepository, scanPublicRepositories } from "./github";
@@ -33,7 +33,7 @@ function App() {
   const [scanning, setScanning] = useState(false);
   const [scanMessage, setScanMessage] = useState(() => cachedPublic
     ? `Showing browser-cached public data from ${new Date(cachedPublic.scannedAt).toLocaleString("en-AU")}. Run a scan to refresh.`
-    : "Showing historical sample data. Run a live scan for current public repositories.");
+    : `Showing ${seededRepositories.length} public repositories checked ${snapshotCheckedAt}. Run a live scan to refresh.`);
   const [scanError, setScanError] = useState(false);
   const [lastScan, setLastScan] = useState<Date | null>(null);
   const [inspections, setInspections] = useState<Record<string, RepoInspection>>({});
@@ -119,6 +119,7 @@ function App() {
             A local-first dashboard for repository health, activity, duplicates,
             upstream tracking, and deliberate cleanup.
           </p>
+          <p><a href="./dragonhub.html">Open DragonHub service status ↗</a></p>
           <div className={`scanStatus ${scanError ? "error" : ""}`} role="status">
             <span>{scanError ? "!" : "●"}</span>
             <div>
@@ -126,7 +127,7 @@ function App() {
               <small>
                 {lastScan
                   ? `Updated ${lastScan.toLocaleTimeString("en-AU", { hour: "2-digit", minute: "2-digit" })}`
-                  : "Run a live scan to replace the snapshot with current public data."}
+                  : `Public snapshot: ${snapshotCheckedAt}. Use Inspect CI & PRs for workflow history.`}
               </small>
             </div>
           </div>
@@ -163,13 +164,24 @@ function App() {
         )}
 
         <section className="stats" aria-label="Repository summary">
-          <article><span>Total tracked</span><strong>{repositories.length}</strong><small>public scan or historical sample</small></article>
+          <article><span>Total tracked</span><strong>{repositories.length}</strong><small>public scan or dated public snapshot</small></article>
           <article><span>Recently active</span><strong className="green">{healthy}</strong><small>not proof of passing tests</small></article>
           <article><span>Review or older</span><strong className="amber">{attention}</strong><small>CI status checked separately</small></article>
           <article><span>Cleanup queue</span><strong className="violet">{cleanup}</strong><small>never delete automatically</small></article>
         </section>
 
         <FreeTools />
+
+        <section className="labPanel" aria-label="Project updates">
+          <div>
+            <p className="eyebrow">PROJECT UPDATE · 1 NOVEMBER 2026</p>
+            <h2>Current work and recorded checks</h2>
+            <p>Local AI tools, reproducible build checks and the Seed CPU/debugger harness.
+              ARM64 guest execution is still in development.</p>
+          </div>
+          <a href="https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/ACTIVITY-CHECK-2026-11-01.md"
+            target="_blank" rel="noopener noreferrer">Read the latest project update ↗</a>
+        </section>
 
         <CompareAndExport owner={OWNER} repositories={repositories} token={token} />
 
@@ -224,9 +236,11 @@ function App() {
                         <strong>{inspections[repo.name].openPulls ?? "Unavailable"}</strong>
                       </div>
                       <div className="inspectionRow">
-                        <span>Latest workflow</span>
+                        <span>Default-branch workflow history</span>
                         <strong className={`workflow ${inspections[repo.name].workflowState}`}>
-                          {inspections[repo.name].workflowName}
+                          {inspections[repo.name].workflowUrl
+                            ? <a href={inspections[repo.name].workflowUrl} target="_blank" rel="noopener noreferrer">{inspections[repo.name].workflowName}</a>
+                            : inspections[repo.name].workflowName}
                         </strong>
                       </div>
                       {inspections[repo.name].workflowUpdatedAt && (
@@ -266,3 +280,4 @@ function App() {
 }
 
 export default App;
+

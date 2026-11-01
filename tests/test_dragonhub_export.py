@@ -1,5 +1,6 @@
 """Independent stdlib checks for the DragonHub read-only exporter."""
 import importlib.util
+from html.parser import HTMLParser
 import json
 import pathlib
 import subprocess
@@ -42,10 +43,26 @@ class DragonHubExportTests(unittest.TestCase):
             self.assertNotEqual(again.returncode, 0)
             self.assertIn("refusing to overwrite", again.stderr)
 
-    def test_browser_resources_are_local_and_csp_disallows_network(self):
+    def test_browser_resources_allow_only_local_assets_and_public_github(self):
         root = FILE.parents[1] / "public"
         html = (root / "dragonhub.html").read_text()
-        self.assertIn("connect-src 'none'", html)
+        class Policies(HTMLParser):
+            policies = []
+
+            def handle_starttag(self, tag, attrs):
+                values = dict(attrs)
+                if tag == "meta" and values.get("http-equiv", "").lower() == "content-security-policy":
+                    self.policies.append(values["content"])
+
+        parsed = Policies()
+        parsed.feed(html)
+        self.assertEqual(len(parsed.policies), 1)
+        directives = {parts[0]: set(parts[1:]) for item in parsed.policies[0].split(";") if (parts := item.split())}
+        self.assertEqual(directives["connect-src"], {"'self'", "https://api.github.com"})
+        self.assertEqual(directives["default-src"], {"'none'"})
+        self.assertEqual(directives["script-src"], {"'self'"})
+        self.assertEqual(directives["form-action"], {"'none'"})
+        self.assertEqual(directives["base-uri"], {"'none'"})
         self.assertIn("src=\"/dragonhub.js\"", html)
         self.assertIn('href="/dragonhub.css"', html)
         self.assertTrue((root / "dragonhub.js").is_file())
