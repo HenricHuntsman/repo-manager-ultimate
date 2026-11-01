@@ -4,16 +4,17 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 
 ## Open from iPhone or PC — works now
 
-These **GitHub-hosted links** work from a phone or computer without an Ubuntu session:
+These links work from a phone or computer without an Ubuntu session:
 
+- **[Live public dashboard](https://repoforge-dashboard.vercel.app/)** · **[DragonHub status page](https://repoforge-dashboard.vercel.app/dragonhub.html)** — deployed on Vercel; the public page and its current catalogue link returned HTTP 200 on 1 November 2026.
 - **[Public project hub / repository list](https://github.com/HenricHuntsman?tab=repositories)** — browse code, history and public projects.
 - **[Cloud progress reports](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/cloud-continuity.yml)** — run/view the read-only status scan; its completed runs include a short report and downloadable JSON.
 - **[Shared programming queue](https://github.com/HenricHuntsman/repo-manager-ultimate/issues/13)** — keep next actions in one place.
 - **[RepoForge build & test results](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/ci.yml)** — confirm the dashboard is building.
-- **[RepoForge website build / future Pages deployment](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/repoforge-website.yml)** — tested static build, but **not confirmed as a live public website**.
+- **[RepoForge website build / optional Pages deployment](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/repoforge-website.yml)** — validates the separate GitHub Pages variant.
 - **[DragonForge Code](https://github.com/HenricHuntsman/dragonforge-code)** · **[Greenlight / mini-AGI](https://github.com/HenricHuntsman/mini-AGI)** · **[AgentFoundry](https://github.com/HenricHuntsman/AgentFoundry-instantly)** — public source and per-project Actions.
 
-The built React website requires **Settings → Pages → Source: GitHub Actions**, then a manual run of **Free RepoForge website** on `main` before a Pages URL is claimed live. [Instructions](docs/FREE-WEB-HOSTING.md). No GitHub token or private repo content belongs on public hosting. Public status checks **do not** train models, run local Ollama, or automatically fix code.
+Optional GitHub Pages publishing requires **Settings → Pages → Source: GitHub Actions**, then a manual run of **Free RepoForge website** on `main`. [Instructions](docs/FREE-WEB-HOSTING.md). No GitHub token or private repo content belongs on public hosting. Public status checks **do not** train models, run local Ollama, or automatically fix code.
 
 ---
 ## Version 0.7
@@ -54,13 +55,15 @@ The static website can remain online without your Ubuntu PC. Colab runtimes are 
 
 ## Free hosted web dashboard
 
-Prepare the existing RepoForge interface for **GitHub Pages** and optionally mirror it on **Cloudflare Pages**, so the same public dashboard can be opened from iPhone or desktop without the Ubuntu machine. See [free web-hosting instructions](docs/FREE-WEB-HOSTING.md). Static site publishing requires a one-time GitHub Pages setting; no site is claimed live until the deployment succeeds.
+The public dashboard is deployed on **Vercel** and can be opened from iPhone or desktop without the Ubuntu machine. **GitHub Pages** and **Cloudflare Pages** remain optional hosting alternatives; see the [free web-hosting instructions](docs/FREE-WEB-HOSTING.md) for their setup and separate deployment checks.
 
 ## Phone and cloud progress
 
 Run read-only public repository checks from [GitHub Actions](https://github.com/HenricHuntsman/repo-manager-ultimate/actions) on iPhone or desktop. See [Phone & Cloud Continuity](docs/MOBILE-CLOUD-CONTINUITY.md) for manual triggering, the scheduled Melbourne-time check-ins and what still requires a powered-on Ubuntu computer. These checks do not write code or include private repositories.
 
 ## Run locally
+
+Use Node.js 22.12+ on the 22 LTS release line, 24.x, or 26+. The supported range is recorded in `package.json` and covers the updated Vitest and Electron toolchains.
 
 ```bash
 npm ci
@@ -114,3 +117,4 @@ See the [project and folder guide](docs/PROJECT-GUIDE.md) for preserved material
 ## Qualification status
 
 The 18 October documentation-cleanup commit passed [CI](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/39079681607). This verifies the workflow's checks, not installation of AppImage/deb packages. Treat version 0.7 as a development version; RC/RTM readiness has not been established. Use the committed lockfile with npm ci.
+
