@@ -23,6 +23,8 @@ jobs:
         env:
           ELECTRON_SKIP_BINARY_DOWNLOAD: "1"
         run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Audit high-severity dependencies
+        run: npm audit --audit-level=high
       - name: Check Electron entry scripts
         run: |
           node --check electron/main.cjs
