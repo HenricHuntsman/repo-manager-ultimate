@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/repoforge-website.yml
       - src/**
+      - public/**
+      - tests/test_dragonhub_export.py
+      - tools/dragonhub_readonly_export.py
       - index.html
       - vite.config.ts
       - package.json
@@ -76,3 +79,4 @@ jobs:
       - name: Deploy only after Pages is enabled by the repository owner
         id: deployment
         uses: actions/deploy-pages@v4
+

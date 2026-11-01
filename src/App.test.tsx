@@ -61,6 +61,14 @@ describe("session-only token UI", () => {
 });
 
 describe("public Colab workbench access", () => {
+  it("starts from a dated public snapshot with the latest project update", () => {
+    render(<App />);
+    expect(screen.getByText("Showing 34 public repositories checked 1 November 2026. Run a live scan to refresh.")).toBeInTheDocument();
+    expect(screen.queryByText("Test-New-")).not.toBeInTheDocument();
+    expect(screen.queryByText("nEW-tEST")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /read the latest project update/i })).toHaveAttribute("href",
+      "https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/ACTIVITY-CHECK-2026-11-01.md");
+  });
   it("offers an optional temporary Colab build without implying always-on hosting", () => {
     render(<App />);
     expect(screen.getByRole("region", { name: "Free Colab development workbench" })).toBeInTheDocument();
@@ -88,3 +96,4 @@ describe("free tools catalog", () => {
     expect(screen.queryByRole("link", { name: "Open Web build and tests" })).not.toBeInTheDocument();
   });
 });
+

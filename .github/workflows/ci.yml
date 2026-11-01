@@ -27,14 +27,13 @@ jobs:
         run: |
           node --check electron/main.cjs
           node --check electron/preload.cjs
+          node --check public/dragonhub.js
       - name: Build dashboard
         run: npm run build
       - name: Run tests
         run: npm test
-      - name: Test dependency-free RepoForge Doctor
-        run: python3 -m unittest discover -s tests -p 'test_repoforge_doctor.py' -v
-      - name: Test offline Git backup and restore
-        run: python3 -m unittest discover -s tests -p 'test_git_recovery_backup.py' -v
+      - name: Test diagnostics, DragonHub exporter and offline Git recovery
+        run: python3 -m unittest discover -s tests -v
       - name: Validate Colab notebook structure and Python cell syntax
         run: |
           python3 - <<'PY'
@@ -58,3 +57,4 @@ jobs:
         run: |
           npm run build
           test -s dist/index.html
+

@@ -10,7 +10,12 @@ function apiHeaders(token?: string): HeadersInit {
 }
 const ACTIVE_REPOS = new Set([
   "AgentFoundry-instantly",
-  "azeroth-pilot-reloaded-Pro-",
+  "azeroth-pilot-reloaded",
+  "QuestMaster-Pro",
+  "dragonforge-code",
+  "opencode",
+  "rabbit-foundry",
+  "mini-AGI",
   "NebulaUltimate",
   "repo-manager-ultimate",
   "book-publish-forge",
@@ -129,30 +134,85 @@ export async function scanPublicRepositories(owner: string, token?: string): Pro
     if (!Array.isArray(payload) || payload.some((row) => !row || typeof row !== "object" || typeof row.name !== "string")) {
       throw new Error("GitHub returned an unexpected repository list. Existing results were preserved.");
     }
-    const pageResults = (payload as GitHubRepository[]).map(mapRepository);
+    const pageResults = (payload as GitHubRepository[])
+      .filter((repo) => repo.private === false).map(mapRepository);
     repositories.push(...pageResults);
-    if (pageResults.length < PAGE_SIZE) return repositories;
+    if (payload.length < PAGE_SIZE) return repositories;
   }
   // Never silently publish a first-page or truncated list as 'complete'.
   throw new Error(`More than ${MAX_PUBLIC_PAGES * PAGE_SIZE} repositories may exist. Scan truncated; existing results were preserved.`);
 }
 
 interface WorkflowRun {
+  id?: number;
+  workflow_id?: number;
+  path?: string;
   name: string;
   status: string;
   conclusion: string | null;
   updated_at: string;
 }
 
-interface WorkflowResponse {
-  workflow_runs: WorkflowRun[];
-}
-
 export async function inspectRepository(owner: string, name: string, token?: string): Promise<import("./types").RepoInspection> {
   const headers = apiHeaders(token);
   const base = `${API_ROOT}/repos/${encodeURIComponent(owner)}/${encodeURIComponent(name)}`;
-  // One workflow fetch, plus bounded PR pagination; never call issue count a PR count.
-  const workflowRequest = fetchGitHub(`${base}/actions/runs?per_page=1`, headers);
+  const workflowRequest = (async (): Promise<Omit<import("./types").RepoInspection, "openPulls">> => {
+    try {
+      const metadataResponse = await fetchGitHub(base, headers);
+      if (!metadataResponse.ok) throw githubFailure(metadataResponse, "Default branch unavailable");
+      const metadata = await metadataResponse.json() as { default_branch?: unknown };
+      if (!metadata || typeof metadata.default_branch !== "string" || !metadata.default_branch) {
+        throw new Error("Default branch unavailable; CI remains unverified.");
+      }
+      const branch = metadata.default_branch;
+      const response = await fetchGitHub(
+        `${base}/actions/runs?branch=${encodeURIComponent(branch)}&per_page=50`, headers,
+      );
+      if (!response.ok) return {
+        workflowName: response.status === 404 ? "Actions not accessible" : `Workflow check unavailable (HTTP ${response.status})`,
+        workflowState: "unavailable", workflowBranch: branch,
+        message: githubFailure(response, "Workflow history unavailable").message,
+      };
+      const payload: unknown = await response.json();
+      const rows = (payload as { workflow_runs?: unknown } | null)?.workflow_runs;
+      if (!Array.isArray(rows) || rows.some((row) => !row || typeof row !== "object" ||
+        typeof row.name !== "string" || typeof row.status !== "string" ||
+        (row.conclusion !== null && typeof row.conclusion !== "string"))) {
+        throw new Error("Unexpected workflow response; CI remains unverified.");
+      }
+      // GitHub lists newest first. An older failure of the same workflow has
+      // been superseded, but a failure in a different workflow still matters.
+      const latestByWorkflow = new Map<string | number, WorkflowRun>();
+      for (const run of rows as WorkflowRun[]) {
+        const key = run.workflow_id ?? run.path ?? run.name;
+        if (!latestByWorkflow.has(key)) latestByWorkflow.set(key, run);
+      }
+      const latest = [...latestByWorkflow.values()];
+      if (!latest.length) return { workflowName: "No workflow runs found", workflowState: "none",
+        workflowBranch: branch, message: `No run history found on ${branch}; tests are unverified.` };
+      const failed = latest.filter((run) => ["failure", "timed_out", "action_required", "startup_failure"].includes(run.conclusion ?? ""));
+      const pending = latest.filter((run) => run.status !== "completed");
+      const passed = latest.filter((run) => run.status === "completed" && run.conclusion === "success");
+      const incomplete = /rel="next"/.test(response.headers.get("link") ?? "");
+      const selected = failed[0] ?? pending[0] ?? latest.find((run) => run.conclusion !== "success") ?? latest[0];
+      const updated = Date.parse(selected.updated_at);
+      const workflowState = failed.length ? "failure" : pending.length ? "pending"
+        : passed.length === latest.length && !incomplete ? "success" : "unavailable";
+      return {
+        workflowName: selected.name || "Unnamed workflow", workflowState, workflowBranch: branch,
+        workflowUrl: Number.isSafeInteger(selected.id) && selected.id! > 0
+          ? `https://github.com/${encodeURIComponent(owner)}/${encodeURIComponent(name)}/actions/runs/${selected.id}` : undefined,
+        workflowUpdatedAt: Number.isFinite(updated)
+          ? new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(updated)) : undefined,
+        message: `Latest results for ${latest.length} workflow${latest.length === 1 ? "" : "s"} on ${branch}: ${passed.length} passed, ${failed.length} failed, ${pending.length} pending, ${latest.length - passed.length - failed.length - pending.length} skipped or unavailable. Run history is not proof of current HEAD.` +
+          (incomplete ? " Window incomplete: only the latest 50 runs were inspected." : ""),
+      };
+    } catch (error) {
+      return { workflowName: "Workflow check unavailable", workflowState: "unavailable",
+        message: error instanceof Error ? error.message : "Workflow history could not be read." };
+    }
+  })();
+  // Count PRs independently so a failure here cannot erase available CI evidence.
   const prRequest = (async () => {
     let count = 0;
     for (let page = 1; page <= 5; page++) {
@@ -164,43 +224,11 @@ export async function inspectRepository(owner: string, name: string, token?: str
       if (data.length < 100) return { count, note: undefined };
     }
     return { count: null, note: "More than 500 pull requests; exact count not verified." };
-  })();
-  const [pull, workflowResponse] = await Promise.all([prRequest, workflowRequest]);
-  if (workflowResponse.status === 429 || (workflowResponse.status === 403 && workflowResponse.headers.get("x-ratelimit-remaining") === "0")) {
-    return { openPulls: pull.count, workflowName: "GitHub API limit reached",
-      workflowState: "unavailable", message: "Retry after the rate limit resets." };
-  }
-  if (workflowResponse.status === 404) {
-    return { openPulls: pull.count, workflowName: "Actions not accessible", workflowState: "unavailable",
-      message: pull.note || "Actions may be disabled or unavailable. Do not assume no workflows exist." };
-  }
-  if (!workflowResponse.ok) {
-    return { openPulls: pull.count, workflowName: `Workflow check unavailable (HTTP ${workflowResponse.status})`,
-      workflowState: "unavailable", message: pull.note };
-  }
-  let workflows: WorkflowResponse;
-  try { workflows = await workflowResponse.json() as WorkflowResponse; }
-  catch { return { openPulls: pull.count, workflowName: "Workflow response invalid",
-    workflowState: "unavailable", message: pull.note }; }
-  if (!Array.isArray(workflows.workflow_runs)) return {
-    openPulls: pull.count, workflowName: "Unexpected workflow response",
-    workflowState: "unavailable", message: pull.note,
-  };
-  const latest = workflows.workflow_runs[0];
-  if (!latest) return { openPulls: pull.count, workflowName: "No workflow runs found",
-    workflowState: "none", message: pull.note };
-  const workflowState = latest.status !== "completed" ? "pending"
-    : latest.conclusion === "success" ? "success"
-    : latest.conclusion === "failure" ? "failure" : "unavailable";
-  const updated = Date.parse(latest.updated_at);
+  })().catch(() => ({ count: null, note: "Pull-request count unavailable; retry later." }));
+  const [pull, workflow] = await Promise.all([prRequest, workflowRequest]);
   return {
-    openPulls: pull.count,
-    workflowName: latest.name || "Unnamed workflow",
-    workflowState,
-    workflowUpdatedAt: Number.isFinite(updated)
-      ? new Intl.DateTimeFormat("en-AU", { day: "numeric", month: "short", year: "numeric" }).format(new Date(updated))
-      : undefined,
-    message: pull.note,
+    ...workflow, openPulls: pull.count,
+    message: [workflow.message, pull.note].filter(Boolean).join(" ") || undefined,
   };
 }
 
@@ -239,3 +267,4 @@ export async function compareRepositories(owner: string, left: string, right: st
     rightOnly: [...rightTree.keys()].filter((path) => !leftTree.has(path)).slice(0, 8),
   };
 }
+

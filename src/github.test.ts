@@ -44,12 +44,13 @@ describe("session-only GitHub authorization", () => {
 
   it("passes the same session token to PR and Actions inspection requests", async () => {
     vi.mocked(fetch)
+      .mockResolvedValueOnce(response({ default_branch: "main" }))
       .mockResolvedValueOnce(response([]))
       .mockResolvedValueOnce(response({ workflow_runs: [] }));
 
     await inspectRepository("SpidermanTotro", "repo-manager-ultimate", "token");
 
-    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(fetch).toHaveBeenCalledTimes(3);
     for (const [, options] of vi.mocked(fetch).mock.calls) {
       expect(new Headers(options?.headers).get("Authorization")).toBe(
         "Bearer token",
@@ -111,8 +112,9 @@ describe("fault-tolerant public scans", () => {
   it("paginates open pull requests and keeps workflow failures separate", async () => {
     const pulls = Array.from({ length: 100 }, (_, n) => ({ number: n + 1 }));
     vi.mocked(fetch)
-      .mockResolvedValueOnce(response({ workflow_runs: [] }))
+      .mockResolvedValueOnce(response({ default_branch: "main" }))
       .mockResolvedValueOnce(response(pulls))
+      .mockResolvedValueOnce(response({ workflow_runs: [] }))
       .mockResolvedValueOnce(response([{ number: 101 }]));
     const info = await inspectRepository("HenricHuntsman", "repo-manager-ultimate");
     expect(info.openPulls).toBe(101);
@@ -121,10 +123,12 @@ describe("fault-tolerant public scans", () => {
 
   it("does not call 404 Actions an empty workflow list", async () => {
     vi.mocked(fetch)
-      .mockResolvedValueOnce(response({ message: "not found" }, 404))
-      .mockResolvedValueOnce(response([]));
+      .mockResolvedValueOnce(response({ default_branch: "main" }))
+      .mockResolvedValueOnce(response([]))
+      .mockResolvedValueOnce(response({ message: "not found" }, 404));
     const info = await inspectRepository("HenricHuntsman", "repo-manager-ultimate");
     expect(info.workflowState).toBe("unavailable");
     expect(info.workflowName).toContain("not accessible");
   });
 });
+

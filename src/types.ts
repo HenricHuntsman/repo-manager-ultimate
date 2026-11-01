@@ -21,6 +21,8 @@ export interface RepoInspection {
   workflowName: string;
   workflowState: "success" | "failure" | "pending" | "none" | "unavailable";
   workflowUpdatedAt?: string;
+  workflowBranch?: string;
+  workflowUrl?: string;
   message?: string;
 }
 
@@ -32,3 +34,4 @@ export interface TreeComparison {
   leftOnly: string[];
   rightOnly: string[];
 }
+
