@@ -39,7 +39,7 @@ jobs:
           sudo chown root:root "$REPOFORGE_SANDBOX_HELPER"
           sudo chmod 4755 "$REPOFORGE_SANDBOX_HELPER"
       - name: Verify offline Electron window
-        run: xvfb-run -a "$REPOFORGE_ELECTRON_BINARY" scripts/desktop-smoke.cjs
+        run: xvfb-run -a -s "-screen 0 1920x1080x24" "$REPOFORGE_ELECTRON_BINARY" scripts/desktop-smoke.cjs
       - name: Retain desktop evidence
         if: always()
         uses: actions/upload-artifact@v4
