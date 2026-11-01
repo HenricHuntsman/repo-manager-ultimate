@@ -4,49 +4,68 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; script-src 'self'; connect-src 'self' https://api.github.com; img-src 'self' data:; form-action 'none'; base-uri 'none'">
-<title>DragonHub | Repositories & MCP</title>
+<meta name="description" content="DragonHub progress, verified builds, public repositories and the remaining steps for private Forgejo and MCP access."><title>DragonHub | Progress & what is missing</title>
 <link rel="stylesheet" href="/dragonhub.css"><script src="/dragonhub.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header><nav><a class="brand" href="/">◆ RepoForge <span>/ DragonHub</span></a><small>LIVE PUBLIC GITHUB DATA · FORGEJO PRIVATE</small></nav></header>
 <main id="main">
-<div class="eyebrow">FORGEJO × MCP × CHATGPT</div>
+<div class="eyebrow">DRAGONHUB PROGRESS · UPDATED 2 NOVEMBER 2026</div>
 <section class="hero">
 <div><h1>Your code, your server.<br><em>One honest status page.</em></h1>
-<p class="lead">Browse live public GitHub projects here. Import local Forgejo checks safely. Keep your existing Ubuntu Git server and MCP tools separate until authentication really works.</p>
-<a class="button" href="#import">Check my Ubuntu report →</a></div>
+<p class="lead">Your public dashboard is live. Linux packages and the offline desktop window have passed CI. The next milestone is a verified, private path from ChatGPT to your local Forgejo server.</p>
+<a class="button" href="#missing">See what is still missing →</a><a class="secondary-link" href="#repos">Browse public projects ↓</a></div>
 <div class="stack" aria-label="Connection architecture">
-<div class="node">CHATGPT <strong>Plugin / ChatGPT Sites</strong><span>Integration pending</span></div>
+<div class="node">CHATGPT <strong>ChatGPT → local Forgejo</strong><span>Authenticated tool read: unverified</span></div>
 <div class="arrow">↓ &nbsp; Authenticated MCP connection</div>
-<div class="node">SECURE BRIDGE <strong>Private tunnel</strong><span>Not yet configured</span></div>
+<div class="node">SECURE BRIDGE <strong>Authenticated bridge</strong><span>Fresh readiness evidence needed</span></div>
 <div class="arrow">↓ &nbsp; Outbound connection only</div>
-<div class="node">UBUNTU <strong>DragonHub MCP</strong><span>127.0.0.1:8787 → Forgejo :3000</span></div>
+<div class="node">UBUNTU <strong>Forgejo + DragonHub MCP</strong><span>Local reachability and authenticated tools need separate checks</span></div>
 </div>
 </section>
-<section class="import" aria-label="Project update"><div><div class="eyebrow">PROJECT UPDATE · 1 NOVEMBER 2026</div><h2>Seed: a stronger debugging foundation</h2><p>The repaired CPU/debugger harness passed 6 harness checks, 14 C++ regressions and 9 integration checks in the saved source-build report. ARM64 instruction execution remains unimplemented.</p><a class="button" href="https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/ACTIVITY-CHECK-2026-11-01.md" target="_blank" rel="noopener noreferrer">Read the project update ↗</a></div><div><h2>Repository checks stay current</h2><p>The main dashboard now starts with a dated snapshot of 34 public repositories and checks the latest result per workflow on the default branch. Refresh there for current build evidence.</p><p><a href="https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/PROGRAM-MATURITY-2026-11-01.md" target="_blank" rel="noopener noreferrer">View maturity and build evidence for all 34 public projects ↗</a></p><a href="/">Open the repository dashboard →</a></div></section>
+<section class="progress-board" aria-labelledby="progress-title">
+<div class="section"><div><div class="eyebrow">VERIFIED PROGRESS</div><h2 id="progress-title">Working now</h2></div><small>Evidence checked 2 November · Melbourne</small></div>
+<div class="cards">
+<article class="card"><span class="pill good">LIVE</span><h3>Public dashboard</h3><p>Vercel production is published</p><div class="detail">The dashboard and this page returned HTTP 200. Public GitHub browsing works without a token.</div><a class="evidence-link" href="/">Open RepoForge →</a></article>
+<article class="card"><span class="pill good">CI VERIFIED</span><h3>Linux desktop build</h3><p>AppImage + Debian packages built</p><div class="detail">Dashboard tests, 17 Python checks and an offline, sandboxed Electron source-window capture passed. Physical GPU and installed-package acceptance are still open.</div><a class="evidence-link" href="https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/41307981652" target="_blank" rel="noopener noreferrer">View build evidence ↗</a></article>
+<article class="card"><span class="pill good">NATIVE CHECKS PASS</span><h3>Windows build repair</h3><p>Process daemon: x64 + ARM64</p><div class="detail">Windows x64/ARM64, Linux, macOS and Miri checks passed on the merged repair. Other upstream workflows request Blacksmith runner labels and remain queued.</div><a class="evidence-link" href="https://github.com/HenricHuntsman/anomalyco-opencode-/actions/runs/41307114108" target="_blank" rel="noopener noreferrer">View native CI ↗</a></article>
+</div>
+</section>
+<section class="missing-panel" id="missing" aria-labelledby="missing-title">
+<div class="section"><div><div class="eyebrow">NEXT MILESTONES</div><h2 id="missing-title">What is still missing?</h2></div><span class="pill warn">WORK REMAINS</span></div>
+<ol class="missing-list">
+<li><strong>Fresh local service evidence</strong><p>Import a current Ubuntu report. The saved Forgejo HTTP 403 is historical; it does not establish today's access.</p><a href="#import">Check local HTTP reachability →</a></li>
+<li><strong>Authenticated Forgejo and MCP access</strong><p>Verify an authorised read, MCP initialization and tool discovery on the local server. An HTTP response alone does not prove these work.</p></li>
+<li><strong>A real ChatGPT-to-Forgejo read</strong><p>Verify an authenticated private bridge and one read-only tool call from ChatGPT. Local JSON imports cannot complete this milestone.</p></li>
+<li><strong>Desktop acceptance and dependency follow-up</strong><p>Test installation, upgrade and rollback on Ubuntu, plus a physical-GPU desktop session. The latest audit has 15 moderate packaging-chain findings; high and critical findings are cleared.</p><a href="https://github.com/HenricHuntsman/repo-manager-ultimate/pull/21" target="_blank" rel="noopener noreferrer">Read scope and remaining limits ↗</a></li>
+<li><strong>Runner capacity for upstream checks</strong><p>Some public upstream jobs are queued on Blacksmith runner labels. The passing native process-daemon checks do not cover those Bun and Nix suites.</p><a href="https://github.com/HenricHuntsman/anomalyco-opencode-/actions" target="_blank" rel="noopener noreferrer">Inspect queued workflows ↗</a></li>
+<li><strong>Seed ARM64 guest execution</strong><p>The CPU/debugger harness is tested; the instruction step is still a placeholder. Guest execution, graphics and a game boot remain unverified.</p></li>
+</ol>
+<a class="button" href="https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/ACTIVITY-CHECK-2026-11-02.md" target="_blank" rel="noopener noreferrer">Read the full activity and missing-work report ↗</a>
+</section>
 <div class="section"><div><div class="eyebrow">CONNECTION HEALTH</div><h2>What is actually working?</h2></div><small id="report-time">Awaiting local report</small></div>
 <div class="cards">
 <article class="card" data-service="forgejo"><span class="pill">UNVERIFIED</span><h3>Forgejo API</h3><p>Ubuntu · port 3000</p><div class="detail">Waiting for your local read-only check.</div></article>
 <article class="card" data-service="mcp"><span class="pill">UNVERIFIED</span><h3>MCP transport</h3><p>Ubuntu · port 8787</p><div class="detail">Waiting for your local read-only check.</div></article>
-<article class="card" data-service="chatgpt"><span class="pill pending">NOT CONNECTED</span><h3>ChatGPT plugin</h3><p>Cloud bridge</p><div class="detail">Only a real tool call from ChatGPT can verify this.</div></article>
+<article class="card" data-service="chatgpt"><span class="pill pending">TO VERIFY</span><h3>ChatGPT → local Forgejo</h3><p>Cloud bridge</p><div class="detail">Only a real tool call from ChatGPT can verify this.</div></article>
 </div>
 <section class="repo-section" id="repos">
 <div class="section"><div><div class="eyebrow">LIVE · PUBLIC GITHUB ONLY</div><h2>Repository activity</h2></div><small>Source: GitHub public API · Never Forgejo</small></div>
 <div class="repo-toolbar"><label for="repo-search">Filter public repositories</label><input id="repo-search" type="search" placeholder="Search your repositories…" autocomplete="off"><button id="reload-repos" type="button">Refresh</button></div>
 <p class="repo-intro" id="repos-status" aria-live="polite">Loading actual public repositories from GitHub. Private repos and Forgejo repositories are not included.</p>
 <div class="repo-grid" id="repo-grid"><div class="repo-placeholder">Checking public GitHub…</div></div>
-<p class="repo-note">This is a read-only public repository view. It doesn't connect to local Forgejo, run CI, use tokens, or claim your private code is available.</p>
+<button class="show-more" id="show-more-repos" type="button" hidden>Show more repositories</button><p class="repo-note">This is a read-only public repository view. It doesn't connect to local Forgejo, run CI, use tokens, or claim your private code is available.</p>
 </section>
 <section class="auth-banner" id="auth">
 <div><div class="eyebrow">SAVED FORGEJO CHECK · HTTP 403</div><h2>Import a fresh report to check access</h2><p>A previously saved Ubuntu check returned <strong>403</strong> for <code>/api/v1/version</code>. That records a reachable port refusing access at the time of the check. Import a new local report to see a newer result.</p></div>
 <div class="auth-actions"><a href="#import">Import local report →</a><a href="https://forgejo.org/docs/latest/user/api/usage/" target="_blank" rel="noopener noreferrer">Forgejo API guide ↗</a></div>
 </section>
-<section class="import" id="import"><div><div class="eyebrow">ZERO-CREDENTIAL DIAGNOSTIC</div><h2>Import a local status report</h2><p>Run the exporter on Ubuntu, then import its JSON here. It contains only HTTP status codes—not API tokens, repository contents, or response bodies. Your file stays inside this browser.</p><label class="upload" for="report-file">Choose status JSON →</label><input type="file" id="report-file" accept=".json,application/json"><p id="report-message" role="status" aria-live="polite">No report imported.</p></div><div class="terminal"><small>UBUNTU TERMINAL · READ ONLY</small><pre>python3 tools/dragonhub_readonly_export.py \
-  --output "$HOME/Downloads/dragonhub-status.json"</pre><p>Run from your RepoForge checkout. An HTTP 403 means reachable but refusing access, not “connected.”</p></div></section>
+<section class="import" id="import"><div><div class="eyebrow">ZERO-CREDENTIAL DIAGNOSTIC</div><h2>Import a local status report</h2><p>Run the exporter on Ubuntu, then import its JSON here. It records HTTP status observations without tokens, repository contents or response bodies. Your file stays in this browser; importing it does not establish a live or authenticated connection.</p><label class="upload" for="report-file">Choose status JSON →</label><input type="file" id="report-file" accept=".json,application/json"><p id="report-message" role="status" aria-live="polite">No report imported.</p></div><div class="terminal"><small>UBUNTU TERMINAL · READ ONLY</small><pre>python3 tools/dragonhub_readonly_export.py \
+  --output "$HOME/Downloads/dragonhub-status.json"</pre><p>Run from your RepoForge checkout. <a href="https://github.com/HenricHuntsman/repo-manager-ultimate/blob/main/tools/dragonhub_readonly_export.py" target="_blank" rel="noopener noreferrer">View the read-only checker ↗</a>. HTTP 403 means access was refused.</p></div></section>
 <div class="section"><div><div class="eyebrow">SAFE PATH TO CHATGPT</div><h2>Four checks before enabling tools</h2></div></div>
-<ol class="steps"><li><b>Verify local services</b><p>Inspect Forgejo API and MCP protocol, not just the listening ports.</p></li><li><b>Secure the source</b><p>Upgrade unsupported Forgejo 11, rotate exposed credentials, create read-only token.</p></li><li><b>Connect privately</b><p>Use an approved private tunnel or authenticated HTTPS MCP service.</p></li><li><b>Prove it in ChatGPT</b><p>Discover tools and read a real repository, then cross-check the Forgejo UI.</p></li></ol>
-<footer>DragonHub · Public GitHub fetch only · Local report import · No credential storage · No automatic service changes</footer>
+<ol class="steps"><li><b>Verify local services</b><p>Inspect Forgejo API and MCP protocol, not just the listening ports.</p></li><li><b>Check authorised access</b><p>Verify the installed version and a scoped read-only credential locally.</p></li><li><b>Connect privately</b><p>Use an approved private tunnel or authenticated HTTPS MCP service.</p></li><li><b>Prove it in ChatGPT</b><p>Discover tools and read a real repository, then cross-check the Forgejo UI.</p></li></ol>
+<footer>Updated 2 November 2026 · DragonHub · Public GitHub fetch only · Local report import · No credential storage · No automatic service changes</footer>
 </main>
 </body>
 </html>

@@ -6,7 +6,7 @@ RepoForge is a local-first repository health and cleanup dashboard. It makes act
 
 These links work from a phone or computer without an Ubuntu session:
 
-- **[Live public dashboard](https://repoforge-dashboard.vercel.app/)** · **[DragonHub status page](https://repoforge-dashboard.vercel.app/dragonhub.html)** — deployed on Vercel; the public page and its current catalogue link returned HTTP 200 on 1 November 2026.
+- **[Live public dashboard](https://repoforge-dashboard.vercel.app/)** · **[DragonHub status page](https://repoforge-dashboard.vercel.app/dragonhub.html)** — deployed on Vercel, with verified progress, remaining milestones and all loaded public projects available through Show more.
 - **[Public project hub / repository list](https://github.com/HenricHuntsman?tab=repositories)** — browse code, history and public projects.
 - **[Cloud progress reports](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/workflows/cloud-continuity.yml)** — run/view the read-only status scan; its completed runs include a short report and downloadable JSON.
 - **[Shared programming queue](https://github.com/HenricHuntsman/repo-manager-ultimate/issues/13)** — keep next actions in one place.
@@ -15,6 +15,8 @@ These links work from a phone or computer without an Ubuntu session:
 - **[DragonForge Code](https://github.com/HenricHuntsman/dragonforge-code)** · **[Greenlight / mini-AGI](https://github.com/HenricHuntsman/mini-AGI)** · **[AgentFoundry](https://github.com/HenricHuntsman/AgentFoundry-instantly)** — public source and per-project Actions.
 
 Optional GitHub Pages publishing requires **Settings → Pages → Source: GitHub Actions**, then a manual run of **Free RepoForge website** on `main`. [Instructions](docs/FREE-WEB-HOSTING.md). No GitHub token or private repo content belongs on public hosting. Public status checks **do not** train models, run local Ollama, or automatically fix code.
+
+The [2 November activity and missing-work report](https://github.com/HenricHuntsman/HenricHuntsman/blob/main/docs/ACTIVITY-CHECK-2026-11-02.md) records the 35-public-project snapshot and separates captured-HEAD CI from older history. Importing a local DragonHub JSON records HTTP observations only; authenticated Forgejo/MCP access and a real ChatGPT tool read need separate verification.
 
 ---
 ## Version 0.7
@@ -116,5 +118,5 @@ See the [project and folder guide](docs/PROJECT-GUIDE.md) for preserved material
 
 ## Qualification status
 
-The 18 October documentation-cleanup commit passed [CI](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/39079681607). This verifies the workflow's checks, not installation of AppImage/deb packages. Treat version 0.7 as a development version; RC/RTM readiness has not been established. Use the committed lockfile with npm ci.
+The merged toolchain repair passed [main CI](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/41307981671) and [Linux package qualification](https://github.com/HenricHuntsman/repo-manager-ultimate/actions/runs/41307981652). It built AppImage/deb packages and captured the sandboxed Electron source entry under offline Xvfb. Ubuntu installation, upgrade/rollback and physical-GPU acceptance remain open. The dependency audit has no high/critical findings and 15 moderate packaging-chain findings. Treat version 0.7 as a development version; RC/RTM readiness has not been established. Use the committed lockfile with npm ci.
 
