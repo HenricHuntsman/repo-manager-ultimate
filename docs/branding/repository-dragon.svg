@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 256 256">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#142039"/><stop offset="1" stop-color="#060b17"/></linearGradient>
+ <radialGradient id="halo" cx=".5" cy=".37" r=".61"><stop stop-color="#7696c8" stop-opacity=".37"/><stop offset="1" stop-color="#7696c8" stop-opacity="0"/></radialGradient>
+ <linearGradient id="scale" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#33405a"/><stop offset=".5" stop-color="#192435"/><stop offset="1" stop-color="#0e1425"/></linearGradient>
+ <linearGradient id="wing" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7696c8" stop-opacity=".91"/><stop offset="1" stop-color="#331525" stop-opacity=".96"/></linearGradient>
+ <filter id="glow"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
+<rect x="3" y="3" width="250" height="250" rx="48" fill="url(#bg)" stroke="#7696c8" stroke-width="4"/>
+<rect x="13" y="13" width="230" height="230" rx="42" fill="url(#halo)"/>
+<circle cx="142" cy="114" r="74" fill="#7696c8" opacity=".16" filter="url(#glow)"/>
+<!-- rear wing and tail -->
+<path d="M76 168 C47 144 36 107 41 69 C58 83 67 96 81 95 C67 70 70 52 79 39 C98 55 105 74 120 80 C136 120 132 155 106 193Z" fill="url(#wing)" stroke="#100d1c" stroke-width="5"/>
+<path d="M80 156 C36 163 32 213 48 225 C41 197 57 182 99 190" fill="none" stroke="#7696c8" stroke-width="12" stroke-linecap="round" opacity=".85"/>
+<!-- crown/spikes -->
+<path d="M87 83 L71 53 L105 68 L102 43 L124 61 L134 31 L145 65 L166 47 L158 75 L186 63 L168 88" fill="#f9903b" stroke="#382437" stroke-width="5" stroke-linejoin="round"/>
+<!-- dragon head -->
+<path d="M66 128 C62 96 84 70 118 66 C149 62 169 76 182 98 C197 105 212 119 210 140 C209 158 196 169 171 166 C158 189 138 201 109 197 C83 194 68 173 66 128Z" fill="url(#scale)" stroke="#060a13" stroke-width="7"/>
+<path d="M152 113 C171 104 187 109 194 124 C177 134 164 134 152 123Z" fill="#eb8a23"/>
+<ellipse cx="169" cy="121" rx="8" ry="11" fill="#191321"/>
+<ellipse cx="172" cy="117" rx="3" ry="4" fill="#fff3c5"/>
+<path d="M140 160 Q160 176 186 162" stroke="#ff9d49" stroke-width="5" fill="none" stroke-linecap="round"/>
+<circle cx="193" cy="146" r="3" fill="#050914"/>
+<!-- artifact/tool badge -->
+<circle cx="65" cy="198" r="37" fill="#080f20" stroke="#7696c8" stroke-width="4"/>
+<circle cx="65" cy="198" r="28" fill="#7696c8" opacity=".16"/>
+<text x="65" y="208" font-family="DejaVu Sans,Arial,sans-serif" font-size="29" text-anchor="middle" font-weight="900" letter-spacing="-.8" fill="#f7faff">RM</text>
+<path d="M20 30 L41 30" stroke="#7696c8" stroke-width="5" stroke-linecap="round"/>
+<path d="M217 225 L238 225" stroke="#7696c8" stroke-width="5" stroke-linecap="round"/>
+</svg>
